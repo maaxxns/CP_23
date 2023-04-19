@@ -36,7 +36,7 @@ double functionc_new(double x, double delta) {
 }
 
 double relativ_error(double x_1,double x_2) {
-    return abs(x_1 - x_2)/x_2;
+    return (abs(x_1 - x_2)/x_2);
 }
 
 int main() {
