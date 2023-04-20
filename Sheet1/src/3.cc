@@ -1,8 +1,9 @@
 #include <iostream>
 #include <math.h>
 #include <fstream>
-#include <filesystem>
+//#include <filesystem>
 #include "2.h"
+#include "2.cc"
 using namespace std;
 
 double exponential_function(double x) {
@@ -13,11 +14,10 @@ double sin_function(double x) {
     return (x * sin(1/x));
 }
 
-double integrate(double (*f)(double), double (*integration_algorithm)(double, int, double, double), double a, double b){
-        double x; // dummy because it seems like I cant give the function to integration_algorithm without the double input
-        double temp =  integration_algorithm(f(x), 1, a, b); // first iteration step is used to compare second itertation step
+double integrate(double (*f)(double), double (*integration_algorithm)(double (*func)(double), int, double, double), double a, double b){
+        double temp =  integration_algorithm(f, 1, a, b); // first iteration step is used to compare second itertation step
         for (int N = 1; N<1000; N=N*2) {
-            double solution = integration_algorithm(f(x), N, a, b);
+            double solution = integration_algorithm(f, N, a, b);
         if (temp - solution <10^(-4)){
             cout << "Necessary N is: " << N << endl;
             return solution;
@@ -25,7 +25,7 @@ double integrate(double (*f)(double), double (*integration_algorithm)(double, in
             temp = solution;
         }
     }
-} //
+}
 
 int main(){
     cout << "Part a) of exercise 3: " << endl;
@@ -44,7 +44,7 @@ int main(){
     }
 
     double solution = integrate(exponential_function, trapezoid, a, b);
-
+    cout << endl << "Solution calculated by the implemented function " << solution << endl;
 
 
 
