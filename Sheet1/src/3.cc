@@ -15,10 +15,10 @@ double sin_function(double x) {
 }
 
 double integrate(double (*f)(double), double (*integration_algorithm)(double (*func)(double), int, double, double), double a, double b){
-        double temp =  integration_algorithm(f, 1, a, b); // first iteration step is used to compare second itertation step
-        for (int N = 1; N<1000; N=N*2) {
+        double temp =  1; // first iteration step is used to compare second itertation step
+        for (int N = 1; N<10000; N=N*2) {
             double solution = integration_algorithm(f, N, a, b);
-        if (temp - solution <10^(-4)){
+        if (abs(temp - solution) < 1e-4){
             cout << "Necessary N is: " << N << endl;
             return solution;
         }else {
@@ -32,19 +32,15 @@ int main(){
     double a = 1;
     double b = 100;
     double temp = 1.;
-    for(int N = 1; N<1000; N=N*2){ //half the intervall until the change in result becomes smaller than 10^-4 but cap it at 1000 incase of overflow
-        double solution = trapezoid(exponential_function, N, a, b);
-        if (temp - solution <10^(-4)){
-            cout << "Necessary N is: " << N << endl;
-            cout << "The soltution is: " << solution << endl;
-            break;
-        }else {
-            temp = solution;
-        }
-    }
 
-    double solution = integrate(exponential_function, trapezoid, a, b);
-    cout << endl << "Solution calculated by the implemented function " << solution << endl;
+    double solution1 = integrate(exponential_function, trapezoid, a, b);
+    cout << "Solution calculated by the implemented trapezoid " << solution1 << endl;
+
+    double solution2 = integrate(exponential_function, riemann, a, b);
+    cout << "Solution calculated by the implemented riemann " << solution2 << endl;
+
+    double solution3 = integrate(exponential_function, simpson, a, b);
+    cout << "Solution calculated by the implemented simpson " << solution3 << endl;
 
 
 
