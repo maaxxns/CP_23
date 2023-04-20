@@ -31,8 +31,8 @@ double riemann(double (*f)(double), int N, double a, double b) {
 
 double simpson(double (*f)(double), int N, double a, double b) {
     if(N%2!=0){     // test if N is a even number
-        N = N+1;
-        cout << "Simpson needs even N so N is increased by 1" << endl;
+        cout << "Simpson needs even N" << endl;
+        return NAN;
     }
     double h = (b-a)/N; // calculate h
     double x = a;
