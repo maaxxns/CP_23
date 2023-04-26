@@ -22,13 +22,14 @@ double *F_func(double r1[], double r2[], double m1, double m2){
 }
 
 void euler(double r1[], double r2[], double m1, double m2, double v1[], double v2[], double h, int T_grenze){
-    double *a = F_func(r1,r2,m1,m2);
+    double *a; 
     ofstream Ex_3_euler_1("bin/Ex_3_euler_1.csv");
     ofstream Ex_3_euler_2("bin/Ex_3_euler_2.csv");
     Ex_3_euler_1 <<  r1[0] << ',' << r1[1] << ',' << v1[0] << ',' << v1[1] << endl;
     Ex_3_euler_2 <<  r2[0] << ',' << r2[1] << ',' << v2[0] << ',' << v2[1] << endl;
 
-    for(int t;t<=T_grenze;t++){
+    for(int t;t<=T_grenze/h;t++){
+        a = F_func(r1,r2,m1,m2);
         r1[0] = r1[0] + v1[0]*h;
         r1[1] = r1[1] + v1[1]*h;
         r2[0] = r2[0] + v2[0]*h;
