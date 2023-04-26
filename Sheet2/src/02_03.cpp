@@ -2,8 +2,12 @@
 #include <math.h>
 #include <fstream>
 #include <ctime> // time_t
+
 using namespace std;
 
+using std::string;
+using std::ofstream;
+using std::fstream;
 int i = 0;
 
 struct parameter {
@@ -28,7 +32,7 @@ double Newton_Gravitation(double r, double R, double mass){
 
 void csv_print(double trajectory[4], string filename){
     ofstream myfile;
-    string path = (filename + ".csv"); // I would rather have one big array which I write into the file but I ran into porblems with that. As the array became to big and I got an overflow
+    string path = ("bin/" + filename + ".csv"); // I would rather have one big array which I write into the file but I ran into porblems with that. As the array became to big and I got an overflow
     myfile.open(path.c_str(), fstream::app);
     for (int j=0; j<4; j++){
     myfile << trajectory[j]; // write the euler approximation into a .csv file
@@ -137,10 +141,7 @@ int main(){
     double h = 0.1;
 
     double trajectory[4]; // Trajectory should fit as many 
-    if(remove("euler.csv") != 0){   // I use fstream::add to write into the csv file so I have to delet the old csv when I start the script again
-        perror( "Error deleting file" );}
-    else{
-        puts( "File successfully deleted" );}
+    remove("bin/euler.csv");  // I use fstream::add to write into the csv file so I have to delet the old csv when I start the script again
     time_t begin,end;
     time (&begin);
     parameter_end = euler(Newton_Gravitation, Parameter, h, trajectory);
@@ -153,10 +154,7 @@ int main(){
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     
     double trajectory1[4];
-    if(remove("verlet.csv") != 0){   // I use fstream::add to write into the csv file so I have to delet the old csv when I start the script again
-        perror( "Error deleting file" );}
-    else{
-        puts( "File successfully deleted" );}
+    remove("bin/verlet.csv");   // I use fstream::add to write into the csv file so I have to delet the old csv when I start the script again
     i = 0;
     time (&begin);
     parameter_end = verlet(Newton_Gravitation, Parameter, h, trajectory1);

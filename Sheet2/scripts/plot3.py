@@ -1,8 +1,8 @@
 import numpy as np 
 import matplotlib.pyplot as plt 
 
-trajectory= np.genfromtxt('src/euler.csv', delimiter=', ')
-trajectory2= np.genfromtxt('src/verlet.csv', delimiter=', ')
+trajectory= np.genfromtxt('bin/euler.csv', delimiter=', ')
+trajectory2= np.genfromtxt('bin/verlet.csv', delimiter=', ')
 #print(trajectory)
 
 plt.figure()
@@ -29,7 +29,7 @@ plt.plot(trajectory2[:100,2], trajectory2[:100,3],ls="-", label='mass2 verlet')
 plt.xlabel("x Position")
 plt.ylabel("y Position")
 plt.legend()
-plt.title("The trajectories of both masses up to T = 10 , calculated with verlet and euler")
+plt.title("The trajectories of both masses up to T = 10 , \n calculated with verlet and euler")
 plt.tight_layout()
 plt.savefig('plots/plotb.pdf')
 
@@ -43,7 +43,7 @@ plt.plot(trajectory2[:,2], trajectory2[:,3],ls="-", label='mass2 verlet')
 plt.xlabel("x Position")
 plt.ylabel("y Position")
 plt.legend()
-plt.title("The trajectories of both masses with back integration -h, calculated with verlet and euler")
+plt.title("The trajectories of both masses with back integration -h, \n calculated with verlet and euler")
 plt.tight_layout()
 plt.savefig('plots/plotc.pdf')
 
@@ -71,6 +71,6 @@ plt.plot(trajectory2[1000:1100,2], trajectory2[1000:1100,3],ls="-", label='mass2
 plt.xlabel("x Position")
 plt.ylabel("y Position")
 plt.legend()
-plt.title("Just the back integration from T=100-90 -h, calculated with verlet and euler")
+plt.title("Just the back integration from T=100-90 -h,\n calculated with verlet and euler")
 plt.tight_layout()
 plt.savefig('plots/plote.pdf')
