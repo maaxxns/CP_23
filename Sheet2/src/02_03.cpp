@@ -32,7 +32,7 @@ double Newton_Gravitation(double r, double R, double mass){
 
 void csv_print(double trajectory[4], string filename){
     ofstream myfile;
-    string path = ("bin/" + filename + ".csv"); // I would rather have one big array which I write into the file but I ran into porblems with that. As the array became to big and I got an overflow
+    const string path = ("bin/" + filename + ".csv"); // I would rather have one big array which I write into the file but I ran into porblems with that. As the array became to big and I got an overflow
     myfile.open(path.c_str(), fstream::app);
     for (int j=0; j<4; j++){
     myfile << trajectory[j]; // write the euler approximation into a .csv file
@@ -75,7 +75,7 @@ parameter euler(double (*F)(double, double, double), parameter euler_parameter, 
     }
     
     i = i + 1; 
-    if (i>int(euler_parameter.T/abs(h) -1)){
+    if (i>int(euler_parameter.T/abs(h))){
         return euler_parameter;
     }
     return euler(F, euler_parameter, h, trajectory);
@@ -126,25 +126,35 @@ int main(){
         //initialize the parameter for the euler problem
     parameter Parameter;
     parameter parameter_end; // output off the functions
-    Parameter.T = 100;
+    Parameter.T = 1000;
     Parameter.mass1 = 1.;
     Parameter.mass2 = 2.;
-    Parameter.r_1[0] = 0; 
-    Parameter.r_1[1] = 1;
-    Parameter.r_2[0] = 0;
+    Parameter.r_1[0] = 0.; 
+    Parameter.r_1[1] = 1.;
+    Parameter.r_2[0] = 0.;
     Parameter.r_2[1] = -0.5;
     Parameter.v_1[0] = 0.8;
     Parameter.v_1[1] = 0.;
     Parameter.v_2[0] = -0.4;
-    Parameter.v_2[1] = 0;
+    Parameter.v_2[1] = 0.;
     
-    double h = 0.1;
-
+    double h = 0.01;
     double trajectory[4]; // Trajectory should fit as many 
     remove("bin/euler.csv");  // I use fstream::add to write into the csv file so I have to delet the old csv when I start the script again
     time_t begin,end;
     time (&begin);
-    parameter_end = euler(Newton_Gravitation, Parameter, h, trajectory);
+
+
+
+    
+    parameter_end = euler(Newton_Gravitation, Parameter, h, trajectory); // The callstack of recursive function grows too large to process and causes a segmentation error
+    // I have to find a way to stop the recursion at some point and call it again.
+
+
+
+
+
+
     time (&end);
     double runtime_euler = difftime(end,begin);
     cout << "The euler scheme took " << runtime_euler << " seconds to process" << endl;
