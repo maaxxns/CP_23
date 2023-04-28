@@ -8,6 +8,7 @@ using namespace std;
 using std::string;
 using std::ofstream;
 using std::fstream;
+
 int i = 0;
 
 struct parameter {
@@ -73,12 +74,8 @@ parameter euler(double (*F)(double, double, double), parameter euler_parameter, 
     euler_parameter.v_1[j] = v_n_1[j]; // save next velocity into struct
     euler_parameter.v_2[j] = v_n_2[j];
     }
-    
-    i = i + 1; 
-    if (i>int(euler_parameter.T/abs(h))){
-        return euler_parameter;
-    }
-    return euler(F, euler_parameter, h, trajectory);
+
+    return euler_parameter;
 }
 
 parameter verlet(double (*F)(double, double, double), parameter verlet_parameter, double h, double trajectory[4]){
@@ -115,18 +112,18 @@ parameter verlet(double (*F)(double, double, double), parameter verlet_parameter
     verlet_parameter.r_2[j] = r_plus_1_2[j];
     }
     i = i + 1;
+    return verlet_parameter;
 
-    if (i>int(verlet_parameter.T/abs(h)) - 1){
-        return verlet_parameter;
-    }
-    return verlet(F, verlet_parameter, h, trajectory);
 }
 
 int main(){
         //initialize the parameter for the euler problem
     parameter Parameter;
     parameter parameter_end; // output off the functions
-    Parameter.T = 1000;
+    
+    Parameter.T = 100;
+    double h = 0.01;
+
     Parameter.mass1 = 1.;
     Parameter.mass2 = 2.;
     Parameter.r_1[0] = 0.; 
@@ -138,41 +135,45 @@ int main(){
     Parameter.v_2[0] = -0.4;
     Parameter.v_2[1] = 0.;
     
-    double h = 0.01;
     double trajectory[4]; // Trajectory should fit as many 
     remove("bin/euler.csv");  // I use fstream::add to write into the csv file so I have to delet the old csv when I start the script again
     time_t begin,end;
     time (&begin);
-
-
-
-    
-    parameter_end = euler(Newton_Gravitation, Parameter, h, trajectory); // The callstack of recursive function grows too large to process and causes a segmentation error
-    // I have to find a way to stop the recursion at some point and call it again.
-
-
-
-
-
-
+    for (int j = 0; j<int(Parameter.T/h); j++){
+    Parameter = euler(Newton_Gravitation, Parameter, h, trajectory);
+    } // I know this isnt ideal but I implemented the scheme as a recursive scheme and got and overflow as the recursion called itself to often.
     time (&end);
     double runtime_euler = difftime(end,begin);
     cout << "The euler scheme took " << runtime_euler << " seconds to process" << endl;
-    i = 0;
+    parameter_end = Parameter;
+    for (int j = 0; j<int(Parameter.T/h); j++){
     parameter_end = euler(Newton_Gravitation, parameter_end, -h, trajectory); // Back integration
-
+    }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    
     double trajectory1[4];
+    Parameter.mass1 = 1.;
+    Parameter.mass2 = 2.;
+    Parameter.r_1[0] = 0.; 
+    Parameter.r_1[1] = 1.;
+    Parameter.r_2[0] = 0.;
+    Parameter.r_2[1] = -0.5;
+    Parameter.v_1[0] = 0.8;
+    Parameter.v_1[1] = 0.;
+    Parameter.v_2[0] = -0.4;
+    Parameter.v_2[1] = 0.;
     remove("bin/verlet.csv");   // I use fstream::add to write into the csv file so I have to delet the old csv when I start the script again
-    i = 0;
+
     time (&begin);
-    parameter_end = verlet(Newton_Gravitation, Parameter, h, trajectory1);
+    for (int j = 0; j<int(Parameter.T/h); j++){
+    Parameter = verlet(Newton_Gravitation, Parameter, h, trajectory1);
+    }
     time (&end);
     double runtime_verlet = difftime(end,begin);
     cout << "The verlet scheme took " << runtime_verlet<< " seconds to process" << endl;
-    i = 0;
+    parameter_end = Parameter;
+    for (int j = 0; j<int(Parameter.T/h); j++){
     parameter_end = verlet(Newton_Gravitation, parameter_end, -h, trajectory1); // Back integration
+    }
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
