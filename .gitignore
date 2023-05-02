@@ -5,6 +5,8 @@
 
 
 # Distribution / packaging
+bin/
+plots/
 .Python
 build/
 develop-eggs/
