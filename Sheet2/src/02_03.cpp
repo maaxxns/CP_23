@@ -24,11 +24,11 @@ struct parameter {
 };
 
 
-double Newton_Gravitation(double r, double R, double mass){
-    if(r==0) {
-        return 0;
-    }
-    return (-(r/pow(R,3) * mass));
+double Newton_Gravitation(double r1, double r2, double R, double mass){
+    //if(r1==0 or r2==0) {
+    //    return 0;
+    //}
+    return (-(r1- r2)/pow(R,3) * mass);
 }
 
 void csv_print(double trajectory[4], string filename){
@@ -50,7 +50,7 @@ double Distance(double r_1_x, double r_1_y, double r_2_x, double r_2_y){ //Dista
     return pow(pow((r_1_x-r_2_x),2) + pow((r_1_y-r_2_y),2),1./2.); 
 }
 
-parameter euler(double (*F)(double, double, double), parameter euler_parameter, double h, double trajectory[4]){ //F is the Force e.g. Newton Gravitation, r_n the Value of the position, v_n the velocity, h the stepwidth wich should be in the same Order of magnitude as r_n, T is the maximum time to which euler integrates, trajectory saves the r_n states to a trajector array of desired size
+parameter euler(double (*F)(double,double, double, double), parameter euler_parameter, double h, double trajectory[4]){ //F is the Force e.g. Newton Gravitation, r_n the Value of the position, v_n the velocity, h the stepwidth wich should be in the same Order of magnitude as r_n, T is the maximum time to which euler integrates, trajectory saves the r_n states to a trajector array of desired size
     double a_1[2]; //acce of mass 1
     double a_2[2]; //acce of mass 2
     double v_n_1[2]; // next velo of mass 1
@@ -62,8 +62,8 @@ parameter euler(double (*F)(double, double, double), parameter euler_parameter, 
     trajectory[3] = euler_parameter.r_2[1];
     csv_print(trajectory, "euler");
     for (int j = 0; j<2; j=j+1){
-    a_1[j] = F(euler_parameter.r_1[j], R, euler_parameter.mass2); // calculate the acceleration for r_1
-    a_2[j] = F(euler_parameter.r_2[j], R, euler_parameter.mass1); // calculate the acceleration for r_2
+    a_1[j] = F(euler_parameter.r_1[j],euler_parameter.r_2[j], R, euler_parameter.mass2); // calculate the acceleration for r_1
+    a_2[j] = F(euler_parameter.r_2[j],euler_parameter.r_1[j], R, euler_parameter.mass1); // calculate the acceleration for r_2
 
     v_n_1[j] = euler_parameter.v_1[j] + a_1[j]*h; // next velocity
     v_n_2[j] = euler_parameter.v_2[j] + a_2[j]*h; // next velocity
@@ -78,7 +78,7 @@ parameter euler(double (*F)(double, double, double), parameter euler_parameter, 
     return euler_parameter;
 }
 
-parameter verlet(double (*F)(double, double, double), parameter verlet_parameter, double h, double trajectory[4]){
+parameter verlet(double (*F)(double, double, double, double), parameter verlet_parameter, double h, double trajectory[4]){
     double R = Distance(verlet_parameter.r_1[0], verlet_parameter.r_1[1], verlet_parameter.r_2[0], verlet_parameter.r_2[1]);
     double a_1[2];
     double a_2[2];
@@ -92,8 +92,8 @@ parameter verlet(double (*F)(double, double, double), parameter verlet_parameter
     csv_print(trajectory, "verlet");
 
     for (int j = 0; j<2; j=j+1){
-    a_1[j] = F(verlet_parameter.r_1[j], R, verlet_parameter.mass2); // calculate the acceleration for r_1
-    a_2[j] = F(verlet_parameter.r_2[j], R, verlet_parameter.mass1); // calculate the acceleration for r_2
+    a_1[j] = F(verlet_parameter.r_1[j],verlet_parameter.r_2[j], R, verlet_parameter.mass2); // calculate the acceleration for r_1
+    a_2[j] = F(verlet_parameter.r_2[j],verlet_parameter.r_1[j], R, verlet_parameter.mass1); // calculate the acceleration for r_2
     
     if(i == 0){ // start parameters r_{n-1} 
         verlet_parameter.r_minus_1_1[j] = verlet_parameter.r_1[j] - verlet_parameter.v_1[j]*h + 1./2. *a_1[j] * pow(h,2);
