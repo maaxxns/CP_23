@@ -7,4 +7,4 @@ r2_x, r2_y, v2_x, v2_y = np.genfromtxt('bin/Ex_3_euler_2.csv' ,delimiter=',', un
 
 plt.plot(r1_x, r1_y, 'x')
 plt.plot(r2_x, r2_y, 'x')
-plt.show()
+plt.savefig('build/test.pdf')
