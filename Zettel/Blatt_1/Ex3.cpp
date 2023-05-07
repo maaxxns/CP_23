@@ -66,9 +66,9 @@ int main(){
     cout << riemann(&a_func, 1,100,1000)<< endl;
     cout << simpson(&a_func, 1,100,1000)<< endl;
 
-    cout << trapezoid(&b_func, 0,1,100) << endl;
-    cout << riemann(&b_func, 0,1,100)<< endl;
-    cout << simpson(&b_func, 0,1,100)<< endl;
+    cout << trapezoid(&b_func, 0,1,1000) << endl;
+    cout << riemann(&b_func, 0,1,1000)<< endl;
+    cout << simpson(&b_func, 0,1,1000)<< endl;
 
 
     return 0;
