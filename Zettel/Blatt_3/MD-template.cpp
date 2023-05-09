@@ -132,13 +132,13 @@ struct Data
                               // For task e) it may be useful to use r instead
                               // in the time-resolved datasets instead
 
-                            Data            ( uint n, uint numBins, double binSize );
+                            Data            ( uint n, uint numBins );
     void                    save            ( const string& filenameSets,
                                               const string& filenameG,
                                               const string& filenameR ) const;
 };
 
-Data::Data( uint n, uint numBins, double binSize ):
+Data::Data( uint n, uint numBins):
     datasets( n ),  // Initializer list, because it calls constructors of the members
     rBin( numBins ),
     g( numBins, 0. ),
@@ -151,8 +151,9 @@ void Data::save ( const string& filenameSets, const string& filenameG, const str
     ofstream Sets(filenameSets);
     ofstream G(filenameG);
     ofstream R(filenameR);
-    for(int i; i<=datasets.size(); i++) 
+    for(int i=0; i<=datasets.size(); i++)
     Sets << datasets[i].t << ',' << datasets[i].T << ',' << datasets[i].Ekin << ',' << datasets[i].Epot << ',' << datasets[i].vS << endl;
+    G << 
 
 
     /*TODO*/
@@ -283,9 +284,9 @@ int main(void)
     PotentialLJ      LJ;
     NoThermostat     noThermo;
     IsokinThermostat isoThermo;
-    const uint n = 10;
+    const uint n = 4;
 
-    const uint partPerRow       = /*TODO*/;
+    const uint partPerRow       = n;
     const uint N                = n*n;/*TODO*/
     const double L              = 2*n;/*TODO*/
     const int numBins           = 100;/*TODO*/
