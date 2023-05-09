@@ -321,10 +321,10 @@ Data MD::measure ( const double dt, const unsigned int a )
                 if(i != k){
 
                     double r1_2 = Distance(r[i][0], r[i][1], r[k][0],r[k][1]);
-                    for (int l = 0; l < 3; l ++){
-                        if(r1_2 < L*l){
+                    for (int l = -2; l < 3; l++){
+                        if(r1_2 < abs(L*l)){
                             for (int j = 0; j < 2; j++){
-                                force_ij[j] = -(r[i][j] - r[k][j] + l*L)/(Distance(r[i][0], r[i][1], r[k][0],r[k][1]) + l*L) * potential.V(r1_2 + l*L); // force of particle j on particle i with boundary conditions
+                                force_ij[j] = -(r[i][j] - r[k][j] + l*L)/(Distance(r[i][0], r[i][1], r[k][0],r[k][1]) + l*L) * (potential.V(r1_2 + l*L) - potential.V(l*L)); // force of particle j on particle i with boundary conditions
                             }
                         }else force_ij = {0,0}; // coutoff gives us force = 0
                     }
