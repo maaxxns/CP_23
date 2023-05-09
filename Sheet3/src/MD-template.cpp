@@ -193,7 +193,7 @@ void Data::save ( const string& filenameSets, const string& filenameG, const str
 {   
     ofstream Sets(filenameSets);
     for(int i = 0; i<=datasets.size(); i++){
-    Sets << datasets[i].t << ',' << datasets[i].T << ',' << datasets[i].Ekin << ',' << datasets[i].Epot << ',' << datasets[i].vS << endl;
+    Sets << datasets[i].t << ',' << datasets[i].T << ',' << datasets[i].Ekin << ',' << datasets[i].Epot << ',' << datasets[i].vS[0] << "," << datasets[i].vS[1] << endl;
     }
 }
 
@@ -303,10 +303,10 @@ void MD::equilibrate ( const double dt, const unsigned int n )
 
 Data MD::measure ( const double dt, const unsigned int a )
 {
-    Data data();
+    Data data(int(a/dt), 2, 2.); // number bins??
     for (int steps = 0; steps<  int(a/dt); steps++){ // the actual time steps
         Dataset dataset;
-        vector<Vector2d> force_i; // contains the force on every particle 
+        vector<Vector2d> force_i(N); // contains the force on every particle 
         parameter pos;
         if(steps == 0){ // initial parameters
             dataset.T = calcT();
@@ -327,11 +327,13 @@ Data MD::measure ( const double dt, const unsigned int a )
                                 force_ij[j] = -(r[i][j] - r[k][j] + l*L)/(Distance(r[i][0], r[i][1], r[k][0],r[k][1]) + l*L) * (potential.V(r1_2 + l*L) - potential.V(l*L)); // force of particle j on particle i with boundary conditions
                             }
                         }else force_ij = {0,0}; // coutoff gives us force = 0
+                        force_ij += force_ij;  // add force to total force of partcle i// segmentation error
+                        }
                     }
+                    force_ij += force_ij;
                 }
+                force_i.pushback(force_ij);
             }
-            force_i[i] += force_ij;
-        }
         for (int i = 0; i < N; i++){ // calculate new position of all particles
             pos.r_1 = r[i];
             pos = verlet(force_i[i], pos, steps, dt, L); // pos also contains last position
@@ -342,9 +344,9 @@ Data MD::measure ( const double dt, const unsigned int a )
         dataset.Ekin = calcEkin(); 
         dataset.t = steps*dt; 
         dataset.vS = calcvS();
-        data().datasets[steps] = dataset;
+        data.datasets[steps] = dataset;
     }   
-    return data();
+    return data;
 }
 
 void MD::centerParticles()
