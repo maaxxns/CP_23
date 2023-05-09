@@ -324,7 +324,7 @@ Data MD::measure ( const double dt, const unsigned int a )
                     for (int l = 0; l < 3; l ++){
                         if(r1_2 < L*l){
                             for (int j = 0; j < 2; j++){
-                                force_ij[j] = (r[i][j] + l*L)/(Distance(r[i][0]+l*L, r[i][1]+l*L, r[k][0]+l*L,r[k][1]+l*L)) * potential.V(r1_2 + l*L); // force of particle j on particle i with boundary conditions
+                                force_ij[j] = -(r[i][j] - r[k][j] + l*L)/(Distance(r[i][0], r[i][1], r[k][0],r[k][1]) + l*L) * potential.V(r1_2 + l*L); // force of particle j on particle i with boundary conditions
                             }
                         }else force_ij = {0,0}; // coutoff gives us force = 0
                     }
@@ -347,10 +347,16 @@ Data MD::measure ( const double dt, const unsigned int a )
     return data();
 }
 
-//void MD::centerParticles()
-//{
-//    /*TODO*/
-//}
+void MD::centerParticles()
+{
+    for (int i = 0; i < N; i++){
+        for (int j = 0; j < 2 ; j++){
+            if (r[i][j] < 0 or r[i][j] > L){
+                r[i][j] = r[i][j] - L*floor(r[i][j]/L); // recenter particles in box
+            }
+        }
+    }
+}
 
 double MD::calcT() const
 {
@@ -394,10 +400,10 @@ Vector2d MD::calcvS() const // if this really is center of mass this should be c
 //    /*TODO*/
 //}
 
-//Vector2d MD::calcDistanceVec( uint i, uint j ) const
-//{
-//    /*TODO*/
-//}
+Vector2d MD::calcDistanceVec( uint i, uint j ) const
+{
+    return r[i] - r[j];
+}
 
 //vector<Vector2d> MD::calcAcc( vector<double>& hist ) const
 //{

@@ -2,7 +2,7 @@
 .PHONY: all
 all: bin/MD-template
 
-bin/MD-template: src/MD-template.cpp
+bin/MD-template: src/MD-template.cpp | bin
 	g++ $^ -o $@
 
 bin:
