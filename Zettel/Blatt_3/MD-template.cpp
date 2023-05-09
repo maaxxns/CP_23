@@ -151,10 +151,20 @@ void Data::save ( const string& filenameSets, const string& filenameG, const str
     ofstream Sets(filenameSets);
     ofstream G(filenameG);
     ofstream R(filenameR);
-    for(int i; i<=datasets.size(); i++) 
+
+    for(int i; i<=datasets.size(); i++) {
     Sets << datasets[i].t << ',' << datasets[i].T << ',' << datasets[i].Ekin << ',' << datasets[i].Epot << ',' << datasets[i].vS << endl;
-
-
+    }
+    for(int i; i<=g.size(); i++){
+    G << g[i] << endl;
+    }
+    for(int i; i<=r.size(); i++){
+    R << r[i] << endl;
+    }
+    
+    Sets.close();
+    G.close();
+    R.close();
     /*TODO*/
 }
 
@@ -212,6 +222,7 @@ MD::MD( double L, uint N, uint particlesPerRow, double T,
     numBins( numBins ),
     binSize( L/numBins /*TODO*/ )
 {
+    
     /*TODO*/
     for(int i; i<N; i++)
     {
