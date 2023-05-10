@@ -69,7 +69,7 @@ parameter verlet(Vector2d F, parameter verlet_parameter,int i, double h, double 
     Vector2d r_plus_1_1; // r_{1, n+1}
     
     for (int j = 0; j<2; j=j+1){
-    a_1[j] = F[i]; // calculate the acceleration for r_1
+    a_1[j] = F[j]; // calculate the acceleration for r_1
     
     if(i == 0){ // start parameters r_{n-1} 
         verlet_parameter.r_minus_1_1[j] = verlet_parameter.r_1[j] - verlet_parameter.v_1[j]*h + 1./2. *a_1[j] * pow(h,2);
@@ -305,6 +305,7 @@ Data MD::measure ( const double dt, const unsigned int t_end )
         Dataset dataset;
         vector<Vector2d> force_i; // contains the force on every particle 
         parameter pos;
+        vector<Vector2d> r_minus1(N); //
         if(steps == 0){ // initial parameters
             dataset.Ekin = calcEpot(); 
             dataset.Ekin = calcEkin(); 
@@ -325,7 +326,6 @@ Data MD::measure ( const double dt, const unsigned int t_end )
                         double r1_2 = Distance(r_dist[0], r_dist[1], l * L, l * L);
                         if(r1_2 < (L/2.) and r1_2 != 0){ // cutoff r1_2 < (L/2.)
                             force_ij += -(calcDistanceVec(i, k) + L_vec)/(r1_2) * (potential.V(r1_2) - potential.V(L/2)); // force of particle j on particle i with boundary conditions
-                            cout << force_ij << endl;
                         }else {force_ij += Vector2d {0,0};} // coutoff gives us force = 0
                         force_ij += force_ij;  // add force to total force of partcle i// segmentation error
                         }
@@ -335,10 +335,14 @@ Data MD::measure ( const double dt, const unsigned int t_end )
                 force_i.push_back(force_ij);
             }
         for (int i = 0; i < N; i++){ // calculate new position of all particles
+            if(i != 0){
+                pos.r_minus_1_1 = r_minus1[i]; // print in the last position of particle i 
+                } 
             pos.v_1 = v[i];
             pos.r_1 = r[i];
             pos = verlet(force_i[i], pos, steps, dt, L); // pos also contains last position
             r[i] = pos.r_1;
+            r_minus1[i] << pos.r_minus_1_1; // save last position of particle i
             v[i] = pos.v_1; // save the new positon in the r vector
         }
         dataset.Ekin = calcEpot(); 
