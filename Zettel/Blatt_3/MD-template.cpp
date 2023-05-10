@@ -3,6 +3,7 @@
 #include <Eigen/Dense>
 #include <numeric>
 #include <fstream>
+#include <random>
 
 using namespace std;
 using namespace Eigen;
@@ -75,7 +76,7 @@ double PotentialLJ::V ( double r2 ) const
 
 
 
-Vector2d PotentialLJ::F ( Vector2d r ) const
+Vector2d PotentialLJ::F ( Vector2d r) const
 {   
     double r2 = r.dot(r); //r2 is squared l2 norm of r
     return r*48/(r2)*(pow((1/r2),6)-0.5*pow((1/r2),3)); //out of Kierfeld-Skript (5.4)
@@ -209,6 +210,7 @@ class MD
 
         // Calculation of the distance vector between particle r[i] and closest mirror particle of r[j].
         Vector2d            calcDistanceVec ( uint i, uint j ) const;
+        vector<Vector2d>    calc_force();
 };
 
 // Initialization of the system via constructor
@@ -221,13 +223,43 @@ MD::MD( double L, uint N, uint particlesPerRow, double T,
     thermostat( thermostat ),
     numBins( numBins ),
     binSize( L/numBins /*TODO*/ )
-{
-    
-    /*TODO*/
-    for(int i; i<N; i++)
-    {
-        
+{   
+    //make a grid with a particle in every square
+    for(int k=0; k<N; k++){
+        for(int i = 0; i<particlesPerRow;i++){
+            for(int j = 0; j<particlesPerRow;j++){
+                r[k] = {i * L/particlesPerRow, j * L/particlesPerRow};
+            }
+        }
     }
+    //number generator
+    mt19937 rnd;
+    uniform_real_distribution<> dist(-1, 1);
+    Vector2d v_CoM = {0,0};
+
+    //set the random velocities for t=0
+    for(int k=0; k<N; k++){
+        double random_vx = dist(rnd);
+        double random_vy = dist(rnd);
+        v[k]= {random_vx, random_vy};
+        v_CoM = v_CoM + v[k];
+    }
+    
+    //subtract the Center of Mass velocity
+    for(int k=0; k<N; k++){
+        v[k]= v[k] - 1/N * v_CoM;
+
+    }
+
+
+    //rescale
+    double alpha = pow(T*2*N, 0.5);
+    for(int k=0; k<N; k++){
+        v[k]= v[k]*alpha;
+
+    }
+
+
 }
 
 // Integration without data acquisition for pure equilibration
@@ -243,48 +275,157 @@ void MD::equilibrate ( const double dt, const unsigned int n )
 
 Data MD::measure ( const double dt, const unsigned int n )
 {
-    /*TODO*/
+    Data data(n,numBins);
+
+    
+
+    //verlet:
+    vector<Vector2d> a_n;
+    vector<Vector2d> a_n1;
+    for(int steps=0; steps<n; steps++){
+        data.datasets[steps].t = steps * dt; //time
+        data.datasets[steps].T = calcT();
+        data.datasets[steps].Ekin = calcEkin();
+        data.datasets[steps].Epot = calcEpot();
+        a_n = calc_force(); //calculate forces of the actual positions
+        for(int i=0; i<N; i++){
+            r[i] = r[i] + v[i]*dt + 0.5 * a_n[i]*dt*dt;
+            if(r[i][0]>L){
+                r[i][0] = r[i][0] - L; //periodic conditions
+            }
+            if(r[i][1]>L){
+                r[i][1] = r[i][1] - L; //periodic conditions
+            }
+        }
+        a_n1 = calc_force(); //calculate forces in new positions
+        for(int i=0; i<N; i++){
+            v[i] = v[i] + 0.5 *(a_n1[i]+a_n[i])*dt;
+        }
+    }
+
+    data.r= r; //save r vector
+    return data;
+}
+    
+vector<Vector2d> MD::calc_force()
+{
+    vector<Vector2d> F;
+    Vector2d r_distance; //distancevector between partciles i and j
+    Vector2d nL; // nL vector
+    Vector2d r_nL; // short for: r_distance + nL
+    double r_nL_2; // square of r_nL
+    for(int i = 0; i<N; i++){
+        for (int j = 0; j<N; j++){
+            r_distance = r[j] - r[i];
+                for(int n_x=-1; n_x<=1 ; n_x++){ //n_x and n_y element of {-1,0,1}
+                    for(int n_y=-1; n_y<=1; n_y++){
+                        if(i==j && n_x==0 && n_y==0){
+                            F[i] = F[i]; // if i = j and n_x = n_y = 0: dont add something
+                        }
+                        else{
+                            nL = {n_x*L, n_y*L};
+                            r_nL = r_distance + nL;
+                            r_nL_2 = r_nL.dot(r_nL);
+                            if(r_nL_2 <= L*L/4.0){ //if the square of the distance is smaller than the square of L/2: add something
+                                F[i] = F[i] + (r_nL)/(r_nL_2)*48*(pow(1/r_nL_2,6)-0.5*pow(1/r_nL_2,3)); //calculating all forces on particle i
+                            }
+                            else{
+                                F[i] = F[i]; // if the distance is too far: dont add something
+                            }
+                        }
+                    }
+                }
+        }
+        F[i] = -F[i]; // change the direction of the force
+
+    }
+    return F;
 }
 
 void MD::centerParticles()
 {
+    
     /*TODO*/
 }
 
 double MD::calcT() const
-{
+{   
+    return 2*calcEkin()/(2*N-2);
     /*TODO*/
 }
 
 double MD::calcEkin() const
-{
-    /*TODO*/
+{   
+    double sum;
+    for (int i = 0; i < N; i++)
+    {
+        sum += v[i].dot(v[i]);
+    }
+    return 0.5*sum;
 }
 
 double MD::calcEpot() const
 {
-    /*TODO*/
+    double Epot = 0.0;
+    vector<double> V;
+    Vector2d r_distance; //distancevector between partciles i and j
+    Vector2d nL; // nL vector
+    Vector2d r_nL; // short for: r_distance + nL
+    double r_nL_2; // square of r_nL
+    for(int i = 0; i<N; i++){
+        for (int j = 0; j<N; j++){
+            r_distance = r[j] - r[i];
+                for(int n_x=-1; n_x<=1 ; n_x++){ //n_x and n_y element of {-1,0,1}
+                    for(int n_y=-1; n_y<=1; n_y++){
+                        if(i==j && n_x==0 && n_y==0){
+                            V[i] = V[i]; // if i = j and n_x = n_y = 0: dont add something
+                        }
+                        else{
+                            nL = {n_x*L, n_y*L};
+                            r_nL = r_distance + nL;
+                            r_nL_2 = r_nL.dot(r_nL);
+                            if(r_nL_2 <= L*L/4.0){ //if the square of the distance is smaller than the square of L/2: add something
+                                V[i] = V[i] + potential.V(r_nL_2); //calculating all potentials on particle i
+                            }
+                            else{
+                                V[i] = V[i]; // if the distance is too far: dont add something
+                            }
+                        }
+                    }
+                }
+        }
+        Epot = Epot + V[i];
+    }
+
+    return 0.5*Epot;
+
 }
 
 Vector2d MD::calcvS() const
-{
-    /*TODO*/
+{  
+    Vector2d v_CoM; 
+    for (int i = 0; i < N; i++)
+    {
+        v_CoM = v_CoM + v[i];
+    
+    }
+    return v_CoM/N;
 }
 
-Dataset MD::calcDataset() const
-{
-    /*TODO*/
-}
+//Dataset MD::calcDataset() const
+//{
+//    /*TODO*/
+//}
 
-Vector2d MD::calcDistanceVec( uint i, uint j ) const
-{
-    /*TODO*/
-}
+//Vector2d MD::calcDistanceVec( uint i, uint j ) const
+//{
+//    /*TODO*/
+//}
 
-vector<Vector2d> MD::calcAcc( vector<double>& hist ) const
-{
-    /*TODO*/
-}
+//vector<Vector2d> MD::calcAcc( vector<double>& hist ) const
+//{
+//    /*TODO*/
+//}
 
 // ------------------------------ End of MD-class ------------------------------------------
 
@@ -303,9 +444,9 @@ int main(void)
 
     // b) Equilibration test
     {
-        const double T          = /*TODO*/;
-        const double dt         = /*TODO*/;
-        const uint steps        = /*TODO*/;
+        const double T          = 1/*TODO*/;
+        const double dt         = 1/*TODO*/;
+        const uint steps        = 100/*TODO*/;
 
         MD md( L, N, partPerRow, T, LJ, noThermo, numBins );
         md.measure( dt, steps ).save( "b)set.dat", "b)g.dat", "b)r.dat" );
@@ -316,13 +457,13 @@ int main(void)
     for ( auto& Tstring: TstringVec )
     {
         const double T          = stod(Tstring);
-        const double dt         = /*TODO*/;
-        const uint equiSteps    = /*TODO*/;
-        const uint steps        = /*TODO*/;
+        //const double dt         = /*TODO*/;
+        //const uint equiSteps    = /*TODO*/;
+        //const uint steps        = /*TODO*/;
 
-        MD md( L, N, partPerRow, T, LJ, noThermo, numBins );
-        md.equilibrate( dt, equiSteps );
-        md.measure( dt, steps ).save( "c)set" + Tstring + ".dat", "c)g" + Tstring + ".dat", "c)r" + Tstring + ".dat" );
+        //MD md( L, N, partPerRow, T, LJ, noThermo, numBins );
+        //md.equilibrate( dt, equiSteps );
+        //md.measure( dt, steps ).save( "c)set" + Tstring + ".dat", "c)g" + Tstring + ".dat", "c)r" + Tstring + ".dat" );
     }
 
     // d) Thermostat
