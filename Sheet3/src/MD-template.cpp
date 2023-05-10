@@ -8,6 +8,15 @@ using namespace std;
 using namespace Eigen;
 using std::ofstream;
 
+// sources of errors
+// 1. distance is calculated wrong
+// 2. the potential is wrong or has the wrong sign 
+// 3. I dont look correctly in the neighbouring boxes
+// 4. the velocity is calculated wrong in verlet
+// 5. the boundary condiations a not implemented correctly 
+// 6. 
+
+
 // =================================================================================================
 //                      PROGRAM STRUCTURE
 //
@@ -63,12 +72,17 @@ double Distance(double r_1_x, double r_1_y, double r_2_x, double r_2_y){ //Dista
     return sqrt(pow((r_1_x-r_2_x),2) + pow((r_1_y-r_2_y),2)); 
 }
 
+double length(Vector2d vec){ // returns the length of vector
+        double distance = sqrt(pow(vec[0], 2) + pow(vec[1], 2));
+    return distance;
+}
+
 
 parameter verlet(Vector2d F, parameter verlet_parameter,int i, double h, double L){
     Vector2d a_1;
     Vector2d r_plus_1_1; // r_{1, n+1}
     
-    for (int j = 0; j<2; j=j+1){
+    for (int j = 0; j < 2; j++){
     a_1[j] = F[j]; // calculate the acceleration for r_1
     
     if(i == 0){ // start parameters r_{n-1} 
@@ -105,7 +119,8 @@ class PotentialLJ: public Potential
 // For the potential, the square of the vector length is sufficient, which saves a root calculation.
 double PotentialLJ::V ( double r2 ) const
 {
-    return (4.*(pow(1./r2, 12) - pow(1./r2, 6)));
+    return 48./r2 * (pow(1./r2, 12) - 1./2. * pow(1./r2, 6));
+    //return (4.*(pow(1./r2, 12) - pow(1./r2, 6)));
 }
 
 Vector2d PotentialLJ::F ( Vector2d r ) const
@@ -145,9 +160,9 @@ void IsokinThermostat::rescale( vector<Vector2d>& v, double T ) const
 {
     double T_t;
     int N_f = 2*v.size() - 2; // degrees of freedom
-    for (int i = 0; i < v.size();){
-        T_t += 2./N_f * (pow(v[i][0], 2) + pow(v[i][1],2));
-        v[i] = v[i] * pow(T/T_t, 2);
+    for (int i = 0; i < v.size(); i++){
+        T_t += 1./N_f * (pow(v[i][0], 2) + pow(v[i][1],2));
+        v[i] = v[i] * pow(T/T_t, 1./2.);
     }
 }
 
@@ -188,7 +203,7 @@ Data::Data( uint n, uint numBins, double binSize ):
 
 void Data::save ( const string& filenameSets, const string& filenameG, const string& filenameR ) const
 {   
-    const string filenames[3] = {filenameSets, filenameG, filenameR}; // I dont really get this but anyway
+    const string filenames[3] =  {"bin/" + filenameSets,"bin/" + filenameG,"bin/" + filenameR}; // I dont really get this but anyway
     for (int j = 0; j < 3 ; j++){
         ofstream Sets(filenames[j]);
         for(int i = 0; i<=datasets.size(); i++){
@@ -261,14 +276,19 @@ MD::MD( double L, uint N, uint particlesPerRow, double T,
         const double distance = sqrt(2.0 * L * L / (N* sin(2.0 * M_PI / N)));
         
         // fill the box
+        int m = 0;
         for (int i = 0; i < particlesPerRow; i++) {
-            for (int j = 0; j < particlesPerRow; j++) {
+            for (int j = 0; j < particlesPerRow -1; j++) {
                 double x = (i + 0.5) * distance; // we dnt want particles on the edge of the box 
                 double y = (j + 0.5) * distance; // because of the way we defined the equal distance
-                if(x < L && y < L){ // test the boundary conditions
-                r[i] = {x, y};
+                x = x - L * floor(x / L);
+                y = y - L * floor(y / L);
+                if(x < L && y < L && m < N){ // test the boundary conditions
+                    r[m] = {x, y};
                 }
+                m++;
             }
+            m++;
         }
 
         // Initialize velocities with random numbers
@@ -306,8 +326,8 @@ void MD::equilibrate ( const double dt, const unsigned int n )
 
 Data MD::measure ( const double dt, const unsigned int t_end )
 {
-    Data data(int(t_end/dt), 2, 2.); // number bins??
-    for (int steps = 0; steps < int(t_end/dt); steps++){ // the actual time steps
+    Data data(t_end/dt, 2, 2.); // number bins??
+    for (int steps = 0; steps < t_end/dt; steps++){ // the actual time steps
         Dataset dataset;
         vector<Vector2d> force_i; // contains the force on every particle 
         parameter pos;
@@ -329,21 +349,19 @@ Data MD::measure ( const double dt, const unsigned int t_end )
                     for (int l = -1; l < 1; l++){
                         Vector2d L_vec = {l*L, l*L};
                         Vector2d r_dist = calcDistanceVec(i, k);
-                        double r1_2 = Distance(r_dist[0], r_dist[1], l * L, l * L);
-                        if(r1_2 < (L/2.) and r1_2 != 0){ // cutoff r1_2 < (L/2.)
-                            force_ij += -(calcDistanceVec(i, k) + L_vec)/(r1_2) * (potential.V(r1_2) - potential.V(L/2)); // force of particle j on particle i with boundary conditions
-                        }else {force_ij += Vector2d {0,0};} // coutoff gives us force = 0
-                        force_ij += force_ij;  // add force to total force of partcle i// segmentation error
+                        double r1_2 = length(r_dist + L_vec); // |r_ij + nL|
+                            if(r1_2 < (L/2.) and r1_2 != 0){ // cutoff r1_2 < (L/2.)
+                                force_ij += (calcDistanceVec(i, k) + L_vec)/(r1_2) * (potential.V(r1_2) - potential.V(L/2.)); // force of particle j on particle i with boundary conditions
+                            }else {force_ij += Vector2d {0,0};} // cutoff gives us force = 0
                         }
                     }
-                    force_ij += force_ij;
                 }
-                force_i.push_back(force_ij);
+                force_i.push_back(force_ij); // add forces of particle i two the overall force vector
             }
         for (int i = 0; i < N; i++){ // calculate new position of all particles
             if(i != 0){
                 pos.r_minus_1_1 = r_minus1[i]; // print in the last position of particle i 
-                } 
+            } 
             pos.v_1 = v[i];
             pos.r_1 = r[i];
             pos = verlet(force_i[i], pos, steps, dt, L); // pos also contains last position
@@ -416,7 +434,7 @@ Vector2d MD::calcvS() const // if this really is center of mass this should be c
 
 Vector2d MD::calcDistanceVec( uint i, uint j ) const
 {
-    return r[i] - r[j];
+    return (r[i] - r[j]);
 }
 
 //vector<Vector2d> MD::calcAcc( vector<double>& hist ) const
@@ -444,7 +462,7 @@ int main(void)
     {
         const double T          = 1;
         const double dt         = 0.01;
-        const uint t_end        = int(T/dt);// number of steps?? or what??
+        const uint t_end        = 10;// number of steps?? or what??
 
         MD md( L, N, partPerRow, T, LJ, noThermo, numBins );
         md.measure( dt, t_end ).save( "b)set.dat", "b)g.dat", "b)r.dat" );
