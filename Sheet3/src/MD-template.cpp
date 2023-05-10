@@ -192,6 +192,9 @@ void Data::save ( const string& filenameSets, const string& filenameG, const str
     for (int j = 0; j < 3 ; j++){
         ofstream Sets(filenames[j]);
         for(int i = 0; i<=datasets.size(); i++){
+            if(i == 0){
+                Sets << "#t, T, Ekin, Epot, vSx, vSy" << endl; 
+            }
         Sets << datasets[i].t << ',' << datasets[i].T << ',' << datasets[i].Ekin << ',' << datasets[i].Epot << ',' << datasets[i].vS[0] << "," << datasets[i].vS[1] << endl;
     }
     }
