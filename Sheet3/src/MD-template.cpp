@@ -188,9 +188,12 @@ Data::Data( uint n, uint numBins, double binSize ):
 
 void Data::save ( const string& filenameSets, const string& filenameG, const string& filenameR ) const
 {   
-    ofstream Sets(filenameSets);
-    for(int i = 0; i<=datasets.size(); i++){
-    Sets << datasets[i].t << ',' << datasets[i].T << ',' << datasets[i].Ekin << ',' << datasets[i].Epot << ',' << datasets[i].vS[0] << "," << datasets[i].vS[1] << endl;
+    const string filenames[3] = {filenameSets, filenameG, filenameR}; // I dont really get this but anyway
+    for (int j = 0; j < 3 ; j++){
+        ofstream Sets(filenames[j]);
+        for(int i = 0; i<=datasets.size(); i++){
+        Sets << datasets[i].t << ',' << datasets[i].T << ',' << datasets[i].Ekin << ',' << datasets[i].Epot << ',' << datasets[i].vS[0] << "," << datasets[i].vS[1] << endl;
+    }
     }
 }
 
