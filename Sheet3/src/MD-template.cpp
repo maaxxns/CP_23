@@ -278,17 +278,16 @@ MD::MD( double L, uint N, uint particlesPerRow, double T,
         // fill the box
         int m = 0;
         for (int i = 0; i < particlesPerRow; i++) {
-            for (int j = 0; j < particlesPerRow -1; j++) {
+            for (int j = 0; j < particlesPerRow; j++) {
                 double x = (i + 0.5) * distance; // we dnt want particles on the edge of the box 
                 double y = (j + 0.5) * distance; // because of the way we defined the equal distance
                 x = x - L * floor(x / L);
                 y = y - L * floor(y / L);
                 if(x < L && y < L && m < N){ // test the boundary conditions
                     r[m] = {x, y};
+                    m++;
                 }
-                m++;
             }
-            m++;
         }
 
         // Initialize velocities with random numbers
