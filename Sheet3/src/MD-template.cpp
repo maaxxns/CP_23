@@ -55,24 +55,21 @@ using std::ofstream;
 struct parameter {
     Vector2d r_1;
     Vector2d r_minus_1_1;
-    Vector2d r_minus_1_2;
     Vector2d v_1;
     double mass = 1;
 };
 
 double Distance(double r_1_x, double r_1_y, double r_2_x, double r_2_y){ //Distance between r_1 and r_2
-    return pow(pow((r_1_x-r_2_x),2) + pow((r_1_y-r_2_y),2),1./2.); 
+    return sqrt(pow((r_1_x-r_2_x),2) + pow((r_1_y-r_2_y),2)); 
 }
+
 
 parameter verlet(Vector2d F, parameter verlet_parameter,int i, double h, double L){
     Vector2d a_1;
-    Vector2d a_2;
     Vector2d r_plus_1_1; // r_{1, n+1}
-    Vector2d r_plus_1_2; // r_{2, n+1}
     
     for (int j = 0; j<2; j=j+1){
     a_1[j] = F[i]; // calculate the acceleration for r_1
-    a_2[j] = F[i]; // calculate the acceleration for r_2
     
     if(i == 0){ // start parameters r_{n-1} 
         verlet_parameter.r_minus_1_1[j] = verlet_parameter.r_1[j] - verlet_parameter.v_1[j]*h + 1./2. *a_1[j] * pow(h,2);
@@ -301,47 +298,52 @@ void MD::equilibrate ( const double dt, const unsigned int n )
     }
 }
 
-Data MD::measure ( const double dt, const unsigned int a )
+Data MD::measure ( const double dt, const unsigned int t_end )
 {
-    Data data(int(a/dt), 2, 2.); // number bins??
-    for (int steps = 0; steps<  int(a/dt); steps++){ // the actual time steps
+    Data data(int(t_end/dt), 2, 2.); // number bins??
+    for (int steps = 0; steps < int(t_end/dt); steps++){ // the actual time steps
         Dataset dataset;
-        vector<Vector2d> force_i(N); // contains the force on every particle 
+        vector<Vector2d> force_i; // contains the force on every particle 
         parameter pos;
         if(steps == 0){ // initial parameters
-            dataset.T = calcT();
             dataset.Ekin = calcEpot(); 
             dataset.Ekin = calcEkin(); 
+            dataset.T = calcT();
             dataset.t = steps*dt; 
             dataset.vS = calcvS();
+            data.datasets[steps] = dataset;
             }
         for (int i = 0; i < N; i++){ // sum over all particles
             Vector2d force_ij;
+            force_ij[0] = 0.;
+            force_ij[1] = 0.;
             for(int k = 0; k < N; k++){ // sum over all particles but one 
                 if(i != k){
-
-                    double r1_2 = Distance(r[i][0], r[i][1], r[k][0],r[k][1]);
-                    for (int l = -2; l < 3; l++){
-                        if(r1_2 < abs(L*l)){
-                            for (int j = 0; j < 2; j++){
-                                force_ij[j] = -(r[i][j] - r[k][j] + l*L)/(Distance(r[i][0], r[i][1], r[k][0],r[k][1]) + l*L) * (potential.V(r1_2 + l*L) - potential.V(l*L)); // force of particle j on particle i with boundary conditions
-                            }
-                        }else force_ij = {0,0}; // coutoff gives us force = 0
+                    for (int l = -1; l < 1; l++){
+                        Vector2d L_vec = {l*L, l*L};
+                        Vector2d r_dist = calcDistanceVec(i, k);
+                        double r1_2 = Distance(r_dist[0], r_dist[1], l * L, l * L);
+                        if(r1_2 < (L/2.) and r1_2 != 0){ // cutoff r1_2 < (L/2.)
+                            force_ij += -(calcDistanceVec(i, k) + L_vec)/(r1_2) * (potential.V(r1_2) - potential.V(L/2)); // force of particle j on particle i with boundary conditions
+                            cout << force_ij << endl;
+                        }else {force_ij += Vector2d {0,0};} // coutoff gives us force = 0
                         force_ij += force_ij;  // add force to total force of partcle i// segmentation error
                         }
                     }
                     force_ij += force_ij;
                 }
-                force_i.pushback(force_ij);
+                force_i.push_back(force_ij);
             }
         for (int i = 0; i < N; i++){ // calculate new position of all particles
+            pos.v_1 = v[i];
             pos.r_1 = r[i];
             pos = verlet(force_i[i], pos, steps, dt, L); // pos also contains last position
-            r[i] = pos.r_1; // save the new positon in the r vector
+            r[i] = pos.r_1;
+            v[i] = pos.v_1; // save the new positon in the r vector
         }
-        dataset.T = calcT();
         dataset.Ekin = calcEpot(); 
         dataset.Ekin = calcEkin(); 
+        dataset.T = calcT(); // 
         dataset.t = steps*dt; 
         dataset.vS = calcvS();
         data.datasets[steps] = dataset;
@@ -369,12 +371,12 @@ double MD::calcT() const
 
 double MD::calcEkin() const
 {
-    double Energy;
-    for (int i = 0; i<N; i++){
-        double power = (pow(v[i][0], 2) + pow(v[i][1],2)); // power = v^2 as we would need to overload the function pow otherwise
-        Energy += 1./2. * power;
-    }
-    return Energy;
+    double Ekin = 0;
+    for (int i = 0; i < N; i++){
+        double power = (pow(abs(v[i][0]), 2) + pow(abs(v[i][1]), 2)); // power = v^2 as we would need to overload the function pow otherwise
+        Ekin += 1./2. * power;
+    } 
+    return Ekin;
 }
 
 double MD::calcEpot() const
@@ -382,7 +384,7 @@ double MD::calcEpot() const
     double Epot;
     for (int i = 0; i < N; i++){
     double r2 = (pow(r[i][0], 2) + pow(r[i][1],2));
-    Epot = potential.V(r2);
+    Epot += potential.V(r2);
     }
     return Epot;
 }
@@ -432,10 +434,10 @@ int main(void)
     {
         const double T          = 1;
         const double dt         = 0.01;
-        const uint steps        = int(T/dt);// number of steps?? or what??
+        const uint t_end        = int(T/dt);// number of steps?? or what??
 
         MD md( L, N, partPerRow, T, LJ, noThermo, numBins );
-        md.measure( dt, steps ).save( "b)set.dat", "b)g.dat", "b)r.dat" );
+        md.measure( dt, t_end ).save( "b)set.dat", "b)g.dat", "b)r.dat" );
     }
 
     // c) Pair correlation function
