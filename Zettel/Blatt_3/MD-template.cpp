@@ -154,7 +154,7 @@ void Data::save ( const string& filenameSets, const string& filenameG, const str
     ofstream R(filenameR);
 
     for(int i; i<=datasets.size(); i++) {
-    Sets << datasets[i].t << ',' << datasets[i].T << ',' << datasets[i].Ekin << ',' << datasets[i].Epot << ',' << datasets[i].vS << endl;
+    Sets << datasets[i].t << ',' << datasets[i].T << ',' << datasets[i].Ekin << ',' << datasets[i].Epot << ',' << datasets[i].vS[0] << ',' << datasets[i].vS[1] << endl;
     }
     for(int i; i<=g.size(); i++){
     G << g[i] << endl;
@@ -269,11 +269,6 @@ MD::MD( double L, uint N, uint particlesPerRow, double T,
 void MD::equilibrate ( const double dt, const unsigned int n )
 {
     /*TODO*/
-    vector<int> vec(10);
-    for ( int i: vec )
-    {
-        cout << i << "\t";
-    }
 }
 
 Data MD::measure ( const double dt, const unsigned int n )
@@ -283,8 +278,8 @@ Data MD::measure ( const double dt, const unsigned int n )
     
 
     //verlet:
-    vector<Vector2d> a_n;
-    vector<Vector2d> a_n1;
+    vector<Vector2d> a_n(N);
+    vector<Vector2d> a_n1(N);
     for(int steps=0; steps<n; steps++){
         data.datasets[steps].t = steps * dt; //time
         data.datasets[steps].T = calcT();
@@ -293,11 +288,11 @@ Data MD::measure ( const double dt, const unsigned int n )
         a_n = calc_force(); //calculate forces of the actual positions
         for(int i=0; i<N; i++){
             r[i] = r[i] + v[i]*dt + 0.5 * a_n[i]*dt*dt;
-            if(r[i][0]>L){
-                r[i][0] = r[i][0] - L; //periodic conditions
+            if(r[i][0]>L or r[i][0]<0){
+                r[i][0] = r[i][0] - L * floor(r[i][0]/L); //periodic conditions
             }
-            if(r[i][1]>L){
-                r[i][1] = r[i][1] - L; //periodic conditions
+            if(r[i][1]>L or r[i][1]<0){
+                r[i][1] = r[i][1] - L * floor(r[i][1]/L); //periodic conditions
             }
         }
         a_n1 = calc_force(); //calculate forces in new positions
@@ -312,12 +307,13 @@ Data MD::measure ( const double dt, const unsigned int n )
     
 vector<Vector2d> MD::calc_force()
 {
-    vector<Vector2d> F;
+    vector<Vector2d> F(N);
     Vector2d r_distance; //distancevector between partciles i and j
     Vector2d nL; // nL vector
     Vector2d r_nL; // short for: r_distance + nL
     double r_nL_2; // square of r_nL
     for(int i = 0; i<N; i++){
+        F[i] = {0.0,0.0};
         for (int j = 0; j<N; j++){
             r_distance = r[j] - r[i];
                 for(int n_x=-1; n_x<=1 ; n_x++){ //n_x and n_y element of {-1,0,1}
@@ -330,7 +326,7 @@ vector<Vector2d> MD::calc_force()
                             r_nL = r_distance + nL;
                             r_nL_2 = r_nL.dot(r_nL);
                             if(r_nL_2 <= L*L/4.0){ //if the square of the distance is smaller than the square of L/2: add something
-                                F[i] = F[i] + (r_nL)/(r_nL_2)*48*(pow(1/r_nL_2,6)-0.5*pow(1/r_nL_2,3)); //calculating all forces on particle i
+                                F[i] += (r_nL)/(r_nL_2)*48*(pow(1/r_nL_2,6)-0.5*pow(1/r_nL_2,3)); //calculating all forces on particle i
                             }
                             else{
                                 F[i] = F[i]; // if the distance is too far: dont add something
@@ -438,7 +434,7 @@ int main(void)
     PotentialLJ      LJ;
     NoThermostat     noThermo;
     IsokinThermostat isoThermo;
-    const uint n = 4;
+    const uint n = 2;
 
     const uint partPerRow       = n;
     const uint N                = n*n;/*TODO*/
@@ -449,7 +445,7 @@ int main(void)
     {
         const double T          = 1/*TODO*/;
         const double dt         = 1/*TODO*/;
-        const uint steps        = 100/*TODO*/;
+        const uint steps        = 10/*TODO*/;
 
         MD md( L, N, partPerRow, T, LJ, noThermo, numBins );
         md.measure( dt, steps ).save( "b)set.dat", "b)g.dat", "b)r.dat" );
