@@ -45,10 +45,11 @@ int main(){
     PotentialLJ testObj;
     Vector2d u = {3,6};
 
-    cout << l2_norm(u) << endl;
-    cout << testObj.F(u) << endl;
+    //cout << l2_norm(u) << endl;
+    //cout << testObj.F(u) << endl;
 
-
+    u[1] = 2;
+    cout << u;
 
     return 0;
 }

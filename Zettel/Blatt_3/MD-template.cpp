@@ -225,13 +225,14 @@ MD::MD( double L, uint N, uint particlesPerRow, double T,
     binSize( L/numBins /*TODO*/ )
 {   
     //make a grid with a particle in every square
-    for(int k=0; k<N; k++){
-        for(int i = 0; i<particlesPerRow;i++){
-            for(int j = 0; j<particlesPerRow;j++){
-                r[k] = {i * L/particlesPerRow, j * L/particlesPerRow};
-            }
+
+    for(int i = 0; i<particlesPerRow; i++){
+        for(int j = 0; j<particlesPerRow; j++){
+            r[i+j][0] = i * L/particlesPerRow;
+            r[i+j][1] = j * L/particlesPerRow;
         }
     }
+
     //number generator
     mt19937 rnd;
     uniform_real_distribution<> dist(-1, 1);
