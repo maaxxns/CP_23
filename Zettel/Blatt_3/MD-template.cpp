@@ -308,34 +308,28 @@ Data MD::measure ( const double dt, const unsigned int n )
 vector<Vector2d> MD::calc_force()
 {
     vector<Vector2d> F(N);
-    Vector2d r_distance; //distancevector between partciles i and j
-    Vector2d nL; // nL vector
-    Vector2d r_nL; // short for: r_distance + nL
-    double r_nL_2; // square of r_nL
+    double r_nL_2; 
     for(int i = 0; i<N; i++){
-        F[i] = {0.0,0.0};
+        Vector2d force = {0.0,0.0};
         for (int j = 0; j<N; j++){
-            r_distance = r[j] - r[i];
+            Vector2d r_distance = r[j] - r[i]; //distancevector between partciles i and j
                 for(int n_x=-1; n_x<=1 ; n_x++){ //n_x and n_y element of {-1,0,1}
                     for(int n_y=-1; n_y<=1; n_y++){
                         if(i==j && n_x==0 && n_y==0){
-                            F[i] = F[i]; // if i = j and n_x = n_y = 0: dont add something
+                            continue; // if i = j and n_x = n_y = 0: dont add something
                         }
                         else{
-                            nL = {n_x*L, n_y*L};
-                            r_nL = r_distance + nL;
-                            r_nL_2 = r_nL.dot(r_nL);
+                            Vector2d nL = {n_x*L, n_y*L}; // nL vector
+                            Vector2d r_nL = r_distance + nL; // short for: r_distance + nL
+                            double r_nL_2 = r_nL.dot(r_nL); // square of r_nL
                             if(r_nL_2 <= L*L/4.0){ //if the square of the distance is smaller than the square of L/2: add something
-                                F[i] += (r_nL)/(r_nL_2)*48*(pow(1/r_nL_2,6)-0.5*pow(1/r_nL_2,3)); //calculating all forces on particle i
-                            }
-                            else{
-                                F[i] = F[i]; // if the distance is too far: dont add something
+                                force += (r_nL)/(r_nL_2)*48*(pow(1/r_nL_2,6)-0.5*pow(1/r_nL_2,3)); //calculating all forces on particle i
                             }
                         }
                     }
                 }
         }
-        F[i] = -F[i]; // change the direction of the force
+        F[i] = -force; // change the direction of the force
 
     }
     return F;
