@@ -19,7 +19,7 @@ double trapezoid(function<double(double)> f,double a, double b, int N =100)
     return sum;
 }
 
-// b)
+// b) 
 double riemann(function<double(double)> f,double a, double b, int N =100)
 {
     double h = (b-a)/N;
