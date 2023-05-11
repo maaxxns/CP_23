@@ -44,10 +44,15 @@ Vector2d PotentialLJ::F ( Vector2d r ) const
 int main(){
     PotentialLJ testObj;
     Vector2d u = {3,6};
+    vector<Vector2d> test(10);
+
 
     //cout << l2_norm(u) << endl;
     //cout << testObj.F(u) << endl;
+    for(int i =0; i<10; i++){
+        test[i] = {i,2*i};
 
+    }
     u[1] = 2;
     cout << u;
 
