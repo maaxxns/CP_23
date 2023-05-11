@@ -61,13 +61,6 @@ using std::ofstream;
 // Virtual class from which concrete potentials can be inherited
 // (Here only Lennard-Jones necessary, but so you can quickly implement other potentials).
 
-struct parameter {
-    Vector2d r_1;
-    Vector2d r_minus_1_1;
-    Vector2d v_1;
-    double mass = 1;
-};
-
 double Distance(double r_1_x, double r_1_y, double r_2_x, double r_2_y){ //Distance between r_1 and r_2
     return sqrt(pow((r_1_x-r_2_x),2) + pow((r_1_y-r_2_y),2)); 
 }
@@ -77,35 +70,11 @@ double length(Vector2d vec){ // returns the length of vector
     return distance;
 }
 
-
-parameter verlet(Vector2d F, parameter verlet_parameter,int i, double h, double L){
-    Vector2d a_1;
-    Vector2d r_plus_1_1; // r_{1, n+1}
-    
-    for (int j = 0; j < 2; j++){
-    a_1[j] = F[j]; // calculate the acceleration for r_1
-    
-    if(i == 0){ // start parameters r_{n-1} 
-        verlet_parameter.r_minus_1_1[j] = verlet_parameter.r_1[j] - verlet_parameter.v_1[j]*h + 1./2. *a_1[j] * pow(h,2);
-    }
-
-    r_plus_1_1[j] = 2.*verlet_parameter.r_1[j] - verlet_parameter.r_minus_1_1[j] + a_1[j] * pow(h,2); // next position
-    
-    if(r_plus_1_1[j] > L){ // periodicall boundaries
-        r_plus_1_1[j] = r_plus_1_1[j] - L*floor(r_plus_1_1[j]/L);
-    }
-    verlet_parameter.v_1[j] = (r_plus_1_1[j] - verlet_parameter.r_minus_1_1[j]); 
-
-    verlet_parameter.r_minus_1_1[j] = verlet_parameter.r_1[j]; // make the n the n-1 step
-    verlet_parameter.r_1[j] = r_plus_1_1[j];    // make the n+1 the n step so basically we shift everything by one
-    }
-    return verlet_parameter;
-}
-
 class Potential
 {
     public:
         virtual double      V               ( double r2 ) const = 0;  // Virtual function
+        virtual double      V2              ( double r2 ) const = 0;
         virtual Vector2d    F               ( Vector2d r ) const = 0; // Virtual function
 };
 
@@ -113,6 +82,7 @@ class PotentialLJ: public Potential
 {
     public:
         double              V               ( double r2 ) const;  // Overwrites virtual function
+        double              V2              ( double r2 ) const; 
         Vector2d            F               ( Vector2d r ) const; // Overwrites virtual function
 };
 
@@ -120,6 +90,12 @@ class PotentialLJ: public Potential
 double PotentialLJ::V ( double r2 ) const
 {
     return 48./r2 * (pow(1./r2, 12) - 1./2. * pow(1./r2, 6));
+    //return (4.*(pow(1./r2, 12) - pow(1./r2, 6)));
+}
+
+double PotentialLJ::V2 ( double r2 ) const
+{
+    return 4.* (pow(1./r2, 12) - pow(1./r2, 6));
     //return (4.*(pow(1./r2, 12) - pow(1./r2, 6)));
 }
 
@@ -162,7 +138,9 @@ void IsokinThermostat::rescale( vector<Vector2d>& v, double T ) const
     int N_f = 2*v.size() - 2; // degrees of freedom
     for (int i = 0; i < v.size(); i++){
         T_t += 1./N_f * (pow(v[i][0], 2) + pow(v[i][1],2));
-        v[i] = v[i] * pow(T/T_t, 1./2.);
+    }
+    for (int i = 0; i < v.size(); i++){
+        v[i] = v[i] * sqrt(T/T_t);
     }
 }
 
@@ -206,7 +184,7 @@ void Data::save ( const string& filenameSets, const string& filenameG, const str
     const string filenames[3] =  {"bin/" + filenameSets,"bin/" + filenameG,"bin/" + filenameR}; // I dont really get this but anyway
     for (int j = 0; j < 3 ; j++){
         ofstream Sets(filenames[j]);
-        for(int i = 0; i<=datasets.size(); i++){
+        for(int i = 0; i<=datasets.size() -1; i++){
             if(i == 0){
                 Sets << "#t, T, Ekin, Epot, vSx, vSy" << endl; 
             }
@@ -250,9 +228,7 @@ class MD
         Dataset             calcDataset     () const;
 
         // Calculation of the acceleration
-        // To avoid redundant calculations, it may be useful to update the histogram
-        // when calculating the accelerations, so it is passed here as a reference.
-        vector<Vector2d>    calcAcc         ( vector<double>& hist ) const;
+        vector<Vector2d>    calcAcc         () const;
 
         // Calculation of the distance vector between particle r[i] and closest mirror particle of r[j].
         Vector2d            calcDistanceVec ( uint i, uint j ) const;
@@ -306,36 +282,53 @@ MD::MD( double L, uint N, uint particlesPerRow, double T,
         }
 
         // Now rescale velocities for given T 
+        thermostat.rescale(v, T);
 
         // some safety
-        if(calcvS().squaredNorm() != 0){
+        if(calcvS().squaredNorm() > 0.000001){
             cout << "The Center of mass velocity is non zero!" << endl;
+            cout << calcvS().squaredNorm() << endl;
         }
         if(calcT() < 1.){
             cout << "Temperature below 1" << endl;
+            cout << calcT() << endl;
         }
 
 }
 
 // Integration without data acquisition for pure equilibration
-void MD::equilibrate ( const double dt, const unsigned int n )
+void MD::equilibrate ( const double dt, const unsigned int t_end )
 {
-    /*TODO*/
-    vector<int> vec(10);
-    for ( int i: vec )
-    {
-        cout << i << "\t";
+    for (int steps = 0; steps < t_end/dt; steps++){ // the actual time steps
+    vector<Vector2d> force_i; // contains the force on every particle 
+    vector<Vector2d> force_i_plus_1; // contains the force on every particle at postion r_{n+1}
+        { // Velocity verlet
+            force_i = calcAcc(); // calc the force on every particle
+            for (int i = 0; i < N; i++){ // all particles
+                for (int j = 0; j < 2; j++){ // all dimensions
+                    r[i][j] = r[i][j] + v[i][j] * dt + 1./2. * force_i[i][j] * pow(dt,2); // get all the new positions r
+                }
+            }
+            force_i_plus_1 = calcAcc(); // get the forces at the new positions
+            for (int i = 0; i < N; i++){ // all particles
+                for(int j = 0; j < 2; j++){ // all dimensions
+                    v[i][j] = v[i][j] + 1./2. * ( force_i_plus_1[i][j] + force_i[i][j]) * dt; // get v_{n+1}
+                }
+            }
+        } // end of velocity verlet
     }
+    cout << "system is kind of in equilibrium" << endl;
 }
 
 Data MD::measure ( const double dt, const unsigned int t_end )
 {
+    equilibrate(dt, int(t_end/2));
     Data data(t_end/dt, 2, 2.); // number bins??
     vector<Vector2d> r_minus1(N); //
     for (int steps = 0; steps < t_end/dt; steps++){ // the actual time steps
         Dataset dataset;
         vector<Vector2d> force_i; // contains the force on every particle 
-        parameter pos;
+        vector<Vector2d> force_i_plus_1; // contains the force on every particle at postion r_{n+1}
         if(steps == 0){ // initial parameters
             dataset.Epot = calcEpot(); 
             dataset.Ekin = calcEkin(); 
@@ -344,40 +337,24 @@ Data MD::measure ( const double dt, const unsigned int t_end )
             dataset.vS = calcvS();
             data.datasets[steps] = dataset;
             }
-        for (int i = 0; i < N; i++){ // sum over all particles
-            Vector2d force_ij;
-            force_ij[0] = 0.;
-            force_ij[1] = 0.;
-            for(int k = 0; k < N; k++){ // sum over all particles but one 
-                if(i != k){
-                    for (int n_x = -1; n_x < 1; n_x++){ // lets look in all the virtual boxes around the normal box
-                        for (int n_y = -1; n_y < 1; n_y++){
-                            Vector2d L_vec = {n_x*L, n_y*L}; // this vector brings us in the neighbouring boxes
-                            Vector2d r_dist = calcDistanceVec(i, k);
-                            double r1_2 = length(r_dist + L_vec); // |r_ij + nL|
-                                if(r1_2 < (L/2.) and r1_2 != 0){ // cutoff r1_2 < (L/2.)
-                                    force_ij += (calcDistanceVec(i, k) + L_vec)/(r1_2) * (potential.V(r1_2) - potential.V(L/2.)); // force of particle j on particle i with boundary conditions
-                                }else {force_ij += Vector2d {0,0};} // cutoff gives us force = 0
-                            }
-                        }
+            { // Velocity verlet
+                force_i = calcAcc(); // calc the force on every particle
+                for (int i = 0; i < N; i++){ // all particles
+                    for (int j = 0; j < 2; j++){ // all dimensions
+                        r[i][j] = r[i][j] + v[i][j] * dt + 1./2. * force_i[i][j] * pow(dt,2); // get all the new positions r
                     }
                 }
-                force_i.push_back(force_ij); // add forces of particle i two the overall force vector
-            }
-        for (int i = 0; i < N; i++){ // calculate new position of all particles
-            if(steps != 0){
-                pos.r_minus_1_1 = r_minus1[i]; // print in the last position of particle i 
-            } 
-            pos.v_1 = v[i];
-            pos.r_1 = r[i];
-            pos = verlet(force_i[i], pos, steps, dt, L); // pos also contains last position
-            r[i] = pos.r_1;
-            r_minus1[i] = pos.r_minus_1_1; // save last position of particle i
-            v[i] = pos.v_1; // save the new velocity in the v vector
-        }
+                force_i_plus_1 = calcAcc(); // get the forces at the new positions
+                for (int i = 0; i < N; i++){ // all particles
+                    for(int j = 0; j < 2; j++){ // all dimensions
+                        v[i][j] = v[i][j] + 1./2. * ( force_i_plus_1[i][j] + force_i[i][j]) * dt; // get v_{n+1}
+                    }
+                }
+            } // end of velocity verlet
         dataset.Epot = calcEpot(); 
         dataset.Ekin = calcEkin(); 
         dataset.T = calcT(); // 
+        if(calcT() > 1){cout << steps << endl;}
         dataset.t = steps*dt; 
         dataset.vS = calcvS();
         data.datasets[steps] = dataset;
@@ -417,8 +394,20 @@ double MD::calcEpot() const
 {   
     double Epot;
     for (int i = 0; i < N; i++){
-    double r2 = (pow(r[i][0], 2) + pow(r[i][1],2));
-    Epot += potential.V(r2);
+        for (int k = 0; k < N; k++){
+            if(i != k){
+                for (int n_x = -1; n_x < 2; n_x++){
+                    for (int n_y = -1; n_y < 2; n_y++){
+                        Vector2d L_vec = {n_x*L, n_y*L}; // this vector brings us in the neighbouring boxes
+                        Vector2d r_dist = calcDistanceVec(i, k);
+                        double r1_2 = length(r_dist + L_vec); // |r_ij + nL|
+                            if(r1_2 < (L/2.) and r1_2 != 0){
+                                Epot += potential.V2(r1_2);
+                            }
+                    }
+                }
+            }
+        }
     }
     return Epot;
 }
@@ -443,10 +432,31 @@ Vector2d MD::calcDistanceVec( uint i, uint j ) const
     return (r[i] - r[j]);
 }
 
-//vector<Vector2d> MD::calcAcc( vector<double>& hist ) const
-//{
-//    /*TODO*/
-//}
+vector<Vector2d> MD::calcAcc() const
+{
+    vector<Vector2d> force_i;
+    for (int i = 0; i < N; i++){ // sum over all particles
+    Vector2d force_ij;
+    force_ij[0] = 0.;
+    force_ij[1] = 0.;
+    for(int k = 0; k < N; k++){ // sum over all particles but one 
+        if(i != k){
+            for (int n_x = -1; n_x < 1; n_x++){ // lets look in all the virtual boxes around the normal box
+                for (int n_y = -1; n_y < 1; n_y++){
+                    Vector2d L_vec = {n_x*L, n_y*L}; // this vector brings us in the neighbouring boxes
+                    Vector2d r_dist = calcDistanceVec(i, k);
+                    double r1_2 = length(r_dist + L_vec); // |r_ij + nL|
+                        if(r1_2 < (L/2.) and r1_2 != 0){ // cutoff r1_2 < (L/2.)
+                            force_ij += (calcDistanceVec(i, k) + L_vec)/(r1_2) * (potential.V(r1_2) - potential.V(L/2.)); // force of particle j on particle i with boundary conditions
+                        }else {force_ij += Vector2d {0,0};} // cutoff gives us force = 0
+                    }
+                }
+            }
+        }
+        force_i.push_back(force_ij); // add forces of particle i two the overall force vector
+    }
+    return force_i;
+}
 
 // ------------------------------ End of MD-class ------------------------------------------
 
@@ -457,20 +467,20 @@ int main(void)
     NoThermostat     noThermo;
     IsokinThermostat isoThermo;
 
-    const int n                 = 2;
+    const int n                 = 4;
     const uint N                = n*n;
     const double L              = 2*n;
     const double distance = sqrt(2.0 * L * L / (N* sin(2.0 * M_PI / N)));
-    const uint partPerRow       = ceil(L/distance);
+    const uint partPerRow       = n;
     const int numBins           = 3; // ???????????????????????????????????????????????????
 
     // b) Equilibration test
     {
         const double T          = 1;
-        const double dt         = 0.01;
-        const uint t_end        = 10;// number of steps?? or what??
+        const double dt         = 0.001;
+        const uint t_end        = 5;// number of steps?? or what??
 
-        MD md( L, N, partPerRow, T, LJ, noThermo, numBins );
+        MD md( L, N, partPerRow, T, LJ, isoThermo, numBins );
         md.measure( dt, t_end ).save( "b)set.dat", "b)g.dat", "b)r.dat" );
     }
 
