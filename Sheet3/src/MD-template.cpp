@@ -292,9 +292,7 @@ MD::MD( double L, uint N, uint particlesPerRow, double T,
 
         // Initialize velocities with random numbers
         for (int i = 0; i < N; i++) {
-            for (int j=0; j<2; j++) {
                 v[i] = {dist(rnd), dist(rnd)}; // this just gives us random velocities from -1 - 1
-            }
         }
         // calculate the velocity of the center of mass which is a simple sum over all velocities
         double vxcm, vycm; // define velocity of the center of mass
@@ -309,6 +307,13 @@ MD::MD( double L, uint N, uint particlesPerRow, double T,
 
         // Now rescale velocities for given T 
 
+        // some safety
+        if(calcvS().squaredNorm() != 0){
+            cout << "The Center of mass velocity is non zero!" << endl;
+        }
+        if(calcT() < 1.){
+            cout << "Temperature below 1" << endl;
+        }
 
 }
 
@@ -326,13 +331,13 @@ void MD::equilibrate ( const double dt, const unsigned int n )
 Data MD::measure ( const double dt, const unsigned int t_end )
 {
     Data data(t_end/dt, 2, 2.); // number bins??
+    vector<Vector2d> r_minus1(N); //
     for (int steps = 0; steps < t_end/dt; steps++){ // the actual time steps
         Dataset dataset;
         vector<Vector2d> force_i; // contains the force on every particle 
         parameter pos;
-        vector<Vector2d> r_minus1(N); //
         if(steps == 0){ // initial parameters
-            dataset.Ekin = calcEpot(); 
+            dataset.Epot = calcEpot(); 
             dataset.Ekin = calcEkin(); 
             dataset.T = calcT();
             dataset.t = steps*dt; 
@@ -345,30 +350,32 @@ Data MD::measure ( const double dt, const unsigned int t_end )
             force_ij[1] = 0.;
             for(int k = 0; k < N; k++){ // sum over all particles but one 
                 if(i != k){
-                    for (int l = -1; l < 1; l++){
-                        Vector2d L_vec = {l*L, l*L};
-                        Vector2d r_dist = calcDistanceVec(i, k);
-                        double r1_2 = length(r_dist + L_vec); // |r_ij + nL|
-                            if(r1_2 < (L/2.) and r1_2 != 0){ // cutoff r1_2 < (L/2.)
-                                force_ij += (calcDistanceVec(i, k) + L_vec)/(r1_2) * (potential.V(r1_2) - potential.V(L/2.)); // force of particle j on particle i with boundary conditions
-                            }else {force_ij += Vector2d {0,0};} // cutoff gives us force = 0
+                    for (int n_x = -1; n_x < 1; n_x++){ // lets look in all the virtual boxes around the normal box
+                        for (int n_y = -1; n_y < 1; n_y++){
+                            Vector2d L_vec = {n_x*L, n_y*L}; // this vector brings us in the neighbouring boxes
+                            Vector2d r_dist = calcDistanceVec(i, k);
+                            double r1_2 = length(r_dist + L_vec); // |r_ij + nL|
+                                if(r1_2 < (L/2.) and r1_2 != 0){ // cutoff r1_2 < (L/2.)
+                                    force_ij += (calcDistanceVec(i, k) + L_vec)/(r1_2) * (potential.V(r1_2) - potential.V(L/2.)); // force of particle j on particle i with boundary conditions
+                                }else {force_ij += Vector2d {0,0};} // cutoff gives us force = 0
+                            }
                         }
                     }
                 }
                 force_i.push_back(force_ij); // add forces of particle i two the overall force vector
             }
         for (int i = 0; i < N; i++){ // calculate new position of all particles
-            if(i != 0){
+            if(steps != 0){
                 pos.r_minus_1_1 = r_minus1[i]; // print in the last position of particle i 
             } 
             pos.v_1 = v[i];
             pos.r_1 = r[i];
             pos = verlet(force_i[i], pos, steps, dt, L); // pos also contains last position
             r[i] = pos.r_1;
-            r_minus1[i] << pos.r_minus_1_1; // save last position of particle i
-            v[i] = pos.v_1; // save the new positon in the r vector
+            r_minus1[i] = pos.r_minus_1_1; // save last position of particle i
+            v[i] = pos.v_1; // save the new velocity in the v vector
         }
-        dataset.Ekin = calcEpot(); 
+        dataset.Epot = calcEpot(); 
         dataset.Ekin = calcEkin(); 
         dataset.T = calcT(); // 
         dataset.t = steps*dt; 
@@ -423,7 +430,7 @@ Vector2d MD::calcvS() const // if this really is center of mass this should be c
     vxcm = vxcm + v[i][0];
     vycm = vycm + v[i][1];
     }
-    return {vxcm, vycm};
+    return {1./N *vxcm, 1./N *vycm};
 }
 
 //Dataset MD::calcDataset() const
