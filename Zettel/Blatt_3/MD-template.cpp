@@ -222,14 +222,16 @@ MD::MD( double L, uint N, uint particlesPerRow, double T,
     potential( potential ),
     thermostat( thermostat ),
     numBins( numBins ),
-    binSize( L/numBins /*TODO*/ )
+    binSize( L/numBins /*TODO*/ ),
+    r(N),
+    v(N)
 {   
     //make a grid with a particle in every square
-
+    int k=0;
     for(int i = 0; i<particlesPerRow; i++){
         for(int j = 0; j<particlesPerRow; j++){
-            r[i+j][0] = i * L/particlesPerRow;
-            r[i+j][1] = j * L/particlesPerRow;
+            r[k] = {i * L/particlesPerRow + 0.5 * L/particlesPerRow, j * L/particlesPerRow + 0.5 * L/particlesPerRow};
+            k++;
         }
     }
 
@@ -368,7 +370,7 @@ double MD::calcEkin() const
 double MD::calcEpot() const
 {
     double Epot = 0.0;
-    vector<double> V;
+    vector<double> V(N);
     Vector2d r_distance; //distancevector between partciles i and j
     Vector2d nL; // nL vector
     Vector2d r_nL; // short for: r_distance + nL
