@@ -203,9 +203,8 @@ class MD
                                             Potential& potential, Thermostat& thermostat,
                                             uint numBins = 1000 );
 
-        void                equilibrate     ( const double dt, const unsigned int n );
-        Data                measure         ( const double dt, const unsigned int n );
-
+        void                equilibrate     ( const double dt, const unsigned int n, double T );
+        Data                measure         ( const double dt, const unsigned int n, double T );
     private:
         vector<Vector2d>    r, v;
         double              L;
@@ -297,7 +296,7 @@ MD::MD( double L, uint N, uint particlesPerRow, double T,
 }
 
 // Integration without data acquisition for pure equilibration
-void MD::equilibrate ( const double dt, const unsigned int t_end )
+void MD::equilibrate ( const double dt, const unsigned int t_end, double T )
 {
     for (int steps = 0; steps < t_end/dt; steps++){ // the actual time steps
     vector<Vector2d> force_i; // contains the force on every particle 
@@ -307,6 +306,7 @@ void MD::equilibrate ( const double dt, const unsigned int t_end )
             for (int i = 0; i < N; i++){ // all particles
                 for (int j = 0; j < 2; j++){ // all dimensions
                     r[i][j] = r[i][j] + v[i][j] * dt + 1./2. * force_i[i][j] * pow(dt,2); // get all the new positions r
+                    centerParticles();
                 }
             }
             force_i_plus_1 = calcAcc(); // get the forces at the new positions
@@ -316,13 +316,14 @@ void MD::equilibrate ( const double dt, const unsigned int t_end )
                 }
             }
         } // end of velocity verlet
+        //thermostat.rescale(v, t);
     }
     cout << "system is kind of in equilibrium" << endl;
 }
 
-Data MD::measure ( const double dt, const unsigned int t_end )
+Data MD::measure ( const double dt, const unsigned int t_end, double T )
 {
-    equilibrate(dt, int(t_end/2));
+    equilibrate(dt, int(t_end/2), T);
     Data data(t_end/dt, 2, 2.); // number bins??
     vector<Vector2d> r_minus1(N); //
     for (int steps = 0; steps < t_end/dt; steps++){ // the actual time steps
@@ -342,6 +343,7 @@ Data MD::measure ( const double dt, const unsigned int t_end )
                 for (int i = 0; i < N; i++){ // all particles
                     for (int j = 0; j < 2; j++){ // all dimensions
                         r[i][j] = r[i][j] + v[i][j] * dt + 1./2. * force_i[i][j] * pow(dt,2); // get all the new positions r
+                        centerParticles();
                     }
                 }
                 force_i_plus_1 = calcAcc(); // get the forces at the new positions
@@ -354,10 +356,11 @@ Data MD::measure ( const double dt, const unsigned int t_end )
         dataset.Epot = calcEpot(); 
         dataset.Ekin = calcEkin(); 
         dataset.T = calcT(); // 
-        if(calcT() > 1){cout << steps << endl;}
+        //if(calcT() > 1){cout << steps << endl;}
         dataset.t = steps*dt; 
         dataset.vS = calcvS();
         data.datasets[steps] = dataset;
+        //thermostat.rescale(v, T);
     }   
     return data;
 }
@@ -467,7 +470,7 @@ int main(void)
     NoThermostat     noThermo;
     IsokinThermostat isoThermo;
 
-    const int n                 = 4;
+    int n                 = 16;
     const uint N                = n*n;
     const double L              = 2*n;
     const double distance = sqrt(2.0 * L * L / (N* sin(2.0 * M_PI / N)));
@@ -481,7 +484,35 @@ int main(void)
         const uint t_end        = 5;// number of steps?? or what??
 
         MD md( L, N, partPerRow, T, LJ, isoThermo, numBins );
-        md.measure( dt, t_end ).save( "b)set.dat", "b)g.dat", "b)r.dat" );
+        md.measure( dt, t_end , T).save( "test.dat","dummy", "dummy" );
+    }
+
+    n = 4;
+    { // test with n = 4
+        const double T          = 1;
+        const double dt         = 0.001;
+        const uint t_end        = 5;// number of steps?? or what??
+
+        MD md4( L, N, partPerRow, T, LJ, isoThermo, numBins );
+        md4.measure( dt, t_end , T).save( "n4.dat","dummy", "dummy" );
+    }
+    n = 8;
+    { // test with n = 8
+        const double T          = 1;
+        const double dt         = 0.001;
+        const uint t_end        = 5;// number of steps?? or what??
+
+        MD md8( L, N, partPerRow, T, LJ, isoThermo, numBins );
+        md8.measure( dt, t_end , T).save( "n8.dat","dummy", "dummy" );
+    }
+    n = 16;
+    { // test with n = 16
+        const double T          = 1;
+        const double dt         = 0.001;
+        const uint t_end        = 5;// number of steps?? or what??
+
+        MD md16( L, N, partPerRow, T, LJ, isoThermo, numBins );
+        md16.measure( dt, t_end , T).save( "n16.dat","dummy", "dummy" );
     }
 
     // c) Pair correlation function
