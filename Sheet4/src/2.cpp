@@ -79,21 +79,21 @@ void Diffusion::FTCS( double t_max, double Delta_x, vector<double> Starting_cond
 
 int main(void) {
     const Vector2d L = {0.,1.};
-    const double t_max = 0.1;
+    const double t_max = 1;
     const double t_max2 = 0.005;
     const double Delta_x = 0.01;
-    const double delta_t_good = 1e-06; // smaller than stability criteon
+    const double delta_t_good = 1e-05; // smaller than stability criteon
     const double delta_t_bad = 6e-05; // bigger than stability criteon
     const double delta_t_almostbad = 4e-05;
 
     { // Part a with u(x,0) = 1
-        Diffusion Diffusion( L, t_max, delta_t_good, Delta_x);
+        Diffusion Diffusion( L, t_max/10, delta_t_good, Delta_x);
         vector<double> Starting_condition(int((L[1] - L[0]) / Delta_x));
         for(int i = 0; i < int((L[1] - L[0]) / Delta_x); i++){
             Starting_condition[i] = 1.;
         }
 
-        Diffusion.FTCS(t_max, Delta_x, Starting_condition);
+        Diffusion.FTCS(t_max/10, Delta_x, Starting_condition);
         Diffusion.save("Diffusion_a.csv");
     }
 
@@ -114,8 +114,8 @@ int main(void) {
 
     { // part b with u(x,0) = delta(x - 0.5) below condition
         Starting_delta[(int((L[1] - L[0]) / (2.*Delta_x)))] = 1.; // in the middle should be a 1
-        Diffusion Diffusionb(L, t_max2, delta_t_bad, Delta_x);
-        Diffusionb.FTCS(t_max2, Delta_x,Starting_delta);
+        Diffusion Diffusionb(L, t_max2*2, delta_t_bad, Delta_x);
+        Diffusionb.FTCS(t_max2*2, Delta_x,Starting_delta);
         Diffusionb.save("Diffusion_b_bad.csv");
     }
 
@@ -126,7 +126,7 @@ int main(void) {
             starting_Haevyside[i] = 0;
         }
         for(int i = int((L[1] - L[0]) / (2.*Delta_x)); i < int((L[1] - L[0]) / (Delta_x)); i++){
-            starting_Haevyside[i] = 1;
+            starting_Haevyside[i] = 2./starting_Haevyside.size();
         }
         Diffusion Diffusionc(L, t_max, delta_t_good, Delta_x);
         Diffusionc.FTCS(t_max, Delta_x, starting_Haevyside);
@@ -144,8 +144,8 @@ int main(void) {
             }
         }
 
-        Diffusion Diffusionc(L, t_max2, delta_t_good, Delta_x);
-        Diffusionc.FTCS(t_max2, Delta_x, weird_function);
+        Diffusion Diffusionc(L, t_max, delta_t_good/10, Delta_x);
+        Diffusionc.FTCS(t_max, Delta_x, weird_function);
         Diffusionc.save("Diffusion_c_weird.csv");
     }
     return 0;

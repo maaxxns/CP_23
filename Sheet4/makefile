@@ -9,7 +9,7 @@ bin/*.csv: bin/2 | bin
 	./bin/2 
 
 bin/2: src/2.cpp | bin 
-	g++ $^ -o $@
+	g++ $^ -O3 -o $@
 
 bin:
 	mkdir bin
