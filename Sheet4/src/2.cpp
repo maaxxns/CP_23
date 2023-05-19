@@ -10,16 +10,16 @@ using std::ofstream;
 class Diffusion
 {
     public:
-        Diffusion (Vector2d L, double t_max, double delta_t, double Delta_x);
+        Diffusion (Vector2d L, double t_max, double delta_t, double Delta_x); // constructor to initilize the 1D Strip and the alocate memory for the Matrix
     // functions
-        void FTCS(double t_max, double Delta_x, vector<double> Starting_condition);
-        void save(const string& filename);
+        void FTCS(double t_max, double Delta_x, vector<double> Starting_condition); // Actual measurment function
+        void save(const string& filename); // save to csv function
 
     private:
-        Vector2d L;
-        double t_max;
-        double Delta_x;
-        double delta_t;
+        Vector2d L; // length of the 1D Strip
+        double t_max; // maximum time 
+        double Delta_x; // the discretization of the length
+        double delta_t; // the discretization of the time
         Matrix<double, Dynamic, Dynamic> u; //u(x, t) a Matrix in which collumns the position x for every time t is saved
         // so row = x collumns = t 
         // Matrix indices are accesed by the (,) operator not with [][] as in python
@@ -65,10 +65,10 @@ void Diffusion::FTCS( double t_max, double Delta_x, vector<double> Starting_cond
         if(i > 0 && i < (L[1] - L[0])/Delta_x - 1){
             u(i, steps + 1) = u(i, steps) + delta_t/pow(Delta_x,2) * (u(i + 1, steps) - 2* u(i, steps) + u(i - 1, steps)); // FCTS time step
         }else{
-            if(i == 0){
+            if(i == 0){ // boundary at x=0
                 u(i, steps + 1) = u(i, steps); // isolating boundary
             }
-            if(i == (L[1] - L[0])/Delta_x - 1){
+            if(i == (L[1] - L[0])/Delta_x - 1){ // boundary at x=L
                 u(i, steps + 1) = u(i, steps); // isoltation boundary
             }
         }
