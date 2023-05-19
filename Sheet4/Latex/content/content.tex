@@ -1,3 +1,69 @@
 
 \section{Solution}
 \label{sec:auswertung}
+
+
+\subsection{Exercise 2}
+
+We chose to make the animations as a 1D-Colormap (matplotlib magma) that is streched to fit a 2D screen.
+So a bright yellow color means high value of $u(x,t)$ and a dark violet color means low value.
+So basically we plot the 1D Data onto a 1D strip that we extend upwards so we get a nice colormap.
+We chose this implementation as we thought a colormap would fit better to Diffusion than a simple graph.
+So even if the .mp4 files look like they show a 2D area they actualy just show a 1D strip.
+
+\begin{itemize}
+    \item[a)]
+        In the first Part we should test the implementation by setting the intial condition to 
+        \begin{equation}
+            u(x,0) = 1 = const
+        \end{equation}
+        The result can be seen in "2a.mp4".
+        As the boundary condition are set to be isolating no heat escapes to the sides.
+        The whole strip stays at $u(x,t) = 1$, as expected.
+    \item[b)]
+        Next we were supposed to test the stability criterion of the FTCS scheme
+        \begin{equation}
+            \frac{2D \Delta t}{\Delta x^2} < 1
+        \end{equation}
+        for the intial condition
+        \begin{equation}
+            u(x,0) = \delta(x-0.5),
+        \end{equation}
+        which is a delta peak at the middle of the strip.
+        As the value for $\Delta x = 0.01$ and $D = 1$ was already given we just changed $\Delta t$.
+        The value of $\Delta t$ we chose as the one just above the criterion was
+        \begin{equation*}
+            \Delta t = 6\cdot10^{-05},
+        \end{equation*}
+        which resulted in a non stable schmeme.
+        The generated video can be seen in "2b\_bad.mp4".
+        The stable value of $\Delta t$ we chose is 
+        \begin{equation*}
+            \Delta t = 4\cdot10^{-05},
+        \end{equation*}
+        which gives a stable scheme, even though it is a bit choppy.
+        The generated video can be seen in file "2b\_good.mp4".
+    \item[c)]
+        In the last part we should test out different starting condition
+        \begin{align}
+            u_1(x,0) &= \delta(x - 0.5)\\
+            u_2(x,0) &= \theta(x - 0.5)\\
+            u_3(x,0) &= \frac{1}{9} \sum_{n=1} ^9 \delta(x-0.1n)
+        \end{align}
+        for which we should test out which system approaches the equilibrium state the fastest.
+        As the timescales were rather different we made the choice to use different time discretization for each condition, even though this makes the comparision harder.
+        The different time discretization are
+        \begin{align}
+            u_1(x,0) &: \Delta t = 4\cdot10^{-05}\\
+            u_2(x,0) &: \Delta t = 1\cdot10^{-05}\\
+            u_3(x,0) &: \Delta t = 1\cdot10^{-06}\,.
+        \end{align}
+        Another thing that makes comparing the differnt conditions difficult is that the integral over $x$ is not $1$ for all of the function.
+        As the Heavyside function has a integral value of $50$.
+        For this reason we also normalized the Heavyside function.
+        With all of this in mind we can compare the three conditions.
+        The Delta ridge approached the equilibrium the fastest, which is why we chose the smalltest time discretization for this condition.
+        The Heavyside function was the slowest of the three.
+        The animations to every part can be seen in "2c\_delta.mp4" for the $u_1(x,0)$, "2c\_haevy.mp4" for $u_2(x,0)$ and "2c\_weird.mp4" for $u_3(x,0)$.
+        If we consider just the normalized condition the space integral of $u(x,t)$ stays the same at a value of 1 for all times.
+    \end{itemize}
