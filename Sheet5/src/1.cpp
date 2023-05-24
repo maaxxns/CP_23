@@ -16,21 +16,21 @@ class Schroedinger
 {
     public:
        Schroedinger(Vector2d L, double Delta_x, double delta_t, string path1); // constructor
-       Matrix< complex<double>, Dynamic, Dynamic > Hamilton(); // calculates the Hamilton operator
        void time_evolution(double t_max); // applies the time evolution operator to the wavefunction
        void wavefunction(double sigma = 1., double xi_0 = 10.); // calcultes the wave function
-       Matrix< complex<double>, Dynamic, Dynamic > A(double delta_t); // makes a the time evolution matrix
-       Matrix< complex<double>, Dynamic, Dynamic > Ones(); // makes a nxm Matrix filled with 1.
     
     private:
-        void save(int steps); // saves the calculated entries of the time evolved wave function
-        Vector2d L; // length of the array in x 
-        double Delta_x; // the discretization of the length in x
-        double delta_t;
-        vector< VectorXcd > psi;//the wavefunction that solves the schroedinger equation
-        VectorXcd psi_n; //entrances of psi
-        string path;
-        ofstream file;
+       Matrix< complex<double>, Dynamic, Dynamic > Hamilton(); // calculates the Hamilton operator
+       Matrix< complex<double>, Dynamic, Dynamic > Ones(); // makes a nxm Matrix filled with 1.
+       Matrix< complex<double>, Dynamic, Dynamic > A(double delta_t); // makes a the time evolution matrix
+       void save(int steps); // saves the calculated entries of the time evolved wave function
+       Vector2d L; // length of the array in x 
+       double Delta_x; // the discretization of the length in x
+       double delta_t;
+       vector< VectorXcd > psi;//the wavefunction that solves the schroedinger equation
+       VectorXcd psi_n; //entrances of psi
+       string path;
+       ofstream file;
 };
 
 Schroedinger::Schroedinger(Vector2d L, double Delta_x, double delta_t, string path1):
@@ -63,15 +63,30 @@ void Schroedinger::save(int steps){
     if(!file.is_open()){ // test if file is open
         file.open(path.c_str()); // if not open the file
     }
+    double sum;
     for (int i = 0; i < psi[steps].size(); i++){
-        file << psi[steps][i].real() << ", "; // now write every entranc of the vector in the file
+        file << pow(abs(psi[steps][i]), 2) << ", "; // now write every entranc of the vector in the file
+        sum =+ pow(abs(psi[steps][i]), 2);
     }
+    cout << sum << endl;
     file << endl; // after that end the line
+    if(steps == 1){
+        ofstream myfile1;
+        myfile1.open("bin/hamilton.csv");
+        Matrix< complex<double>, Dynamic, Dynamic > A_1 = A(delta_t);
+        for (int i = 0; i < A_1.rows(); i++){
+            for(int j = 0; j < A_1.cols(); j++){
+                myfile1 << A_1(i,j) << ", ";
+            }
+            myfile1 << endl;
+        }
+        myfile1.close();
+    }
 }
 
 Matrix< complex<double>, Dynamic, Dynamic > Schroedinger::A(double delta_t1){ // makes the time evolution matrix
     delta_t = delta_t1;
-    complex<double> del_t {0., delta_t1};
+    complex<double> del_t {delta_t1, 0.};
     Matrix< complex<double>, Dynamic, Dynamic > A;
     Matrix< complex<double>, Dynamic, Dynamic > H = Hamilton();
     Matrix< complex<double>, Dynamic, Dynamic > One = Ones();
@@ -85,7 +100,7 @@ Matrix< complex<double>, Dynamic, Dynamic > Schroedinger::Hamilton(){
     Matrix< complex<double>, Dynamic, Dynamic> Hamilton(N,N); // matrix nxm
     //Hamilton.resize(N,N);
     for (int n = 0; n < N; n++){ 
-            Hamilton(n, n) = -1./pow(Delta_x, 2) * ( -2. ) + pow(Delta_x, 2) * pow(n, 2);
+            Hamilton(n, n) = -1./pow(Delta_x, 2) * ( -2. ) + pow(Delta_x, 2) * pow(n, 2); // this n is weird
             if(n > 0){
                 Hamilton(n, n - 1) = -1./pow(Delta_x,2)*( 1 );
             }
@@ -108,12 +123,12 @@ void Schroedinger::wavefunction(double sigma, double xi_0){
     complex<double> sum;
     for (int i = 0; i < int((L[1] - L[0])/Delta_x); i++){
         psi[0][i] = pow(1./(2. * M_PI * sigma), 0.25) + exp( -pow(Delta_x * i - xi_0 , 2)/(4 * sigma));
-        sum += psi[0][i];
+        sum += pow(abs(psi[0][i]),2); // norm with the squared norm
     }
-    psi[0] = 1./sum * psi[0];
+    psi[0] = 1./sum * psi[0]; // apply squared norm
     sum = 0.;
     for (int i = 0; i < int((L[1] - L[0])/Delta_x); i++){
-        sum += psi[0][i];
+        sum +=pow(abs(psi[0][i]),2); // test if its applied correctly
     }
     cout << sum << endl;
 }
