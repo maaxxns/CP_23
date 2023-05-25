@@ -15,10 +15,9 @@ struct Start_values{
 class Waveequation
 {
     public:
-        Waveequation (Vector2d L, double t_max, double delta_t, double Delta_x, double Delta_y); // constructor to initilize the 1D Strip and the alocate memory for the Matrix
+        Waveequation (Vector2d L, double t_max, double delta_t, double Delta_x, double Delta_y, const string& filename); // constructor to initilize the 1D Strip and the alocate memory for the Matrix
     // functions
         void Integration(double t_max, double Delta_x, double Delta_y, Start_values Starting_condition); // Actual measurment function
-        void save(const string& filename); // save to csv function
 
     private:
         Vector2d L; // length of the array in x and y Strip
@@ -28,57 +27,42 @@ class Waveequation
         double delta_t; // the discretization of the time
         vector<MatrixXd> u;//u = {u_0(x, y), u_1(x, y), u_2(x,y),...} a vctor of matrices that saves the functions value at space (x,y) at time t
         MatrixXd u_t;
+        void save(int steps); // save to csv function
         // Matrix indices are accesed by the (,) operator not with [][] as in python
+        ofstream myfile1;
+        ofstream myfile2;
+        string filename;
 };
 
-Waveequation::Waveequation(Vector2d L, double t_max, double delta_t, double Delta_x, double Delta_y):
+Waveequation::Waveequation(Vector2d L, double t_max, double delta_t, double Delta_x, double Delta_y, const string& filename):
     L(L),
     delta_t(delta_t),
     Delta_x(Delta_x),
     Delta_y(Delta_y),
     t_max(t_max),
-    u(int(t_max/delta_t)), // alocate space 
+    filename(filename),
+    u(3), // alocate space 
     u_t(int(L[0]/Delta_x), int(L[1]/Delta_y))
 {
     for(int i = 0; i < u.size(); i++){
         u[i] = u_t;
     }
     cout << u_t.rows() <<" x "<< u_t.cols() << endl;
-}
-
-void Waveequation::save(const string& filename){
     ofstream myfile1;
     ofstream myfile2;
-    string path = "bin/" + filename;
-    myfile1.open(path.c_str());
-    for (int t = 0; t < u.size(); t++){ // time
-        if(t == 0){
-            myfile1 << "# rows ar time, the rest of the data is dummed in one big line" << endl;
-        }
-        for (int i = 0; i < u[t].rows(); i++ ){
-            for (int k = 0; k < u[t].cols(); k++){ // i am not 100% certain about the u.cols()
-                myfile1 << u[t](i, k) << ", ";
-            }
-        }
-        myfile1 << endl;
-    }
-    myfile2.close();
-    string path2 = "bin/compressed" + filename;
-    myfile2.open(path2.c_str());
-    int iterator = int(u.size()/100);
-    for (int t = 0; t < 100; t++){ // time
-        if(t == 0){
-            myfile2 << "# rows ar time, the rest of the data is dummed in one big line" << endl;
-        }
-        for (int i = 0; i < u[t].rows(); i++ ){
-            for (int k = 0; k < u[t].cols(); k++){ // i am not 100% certain about the u.cols()
-                myfile2 << u[t*iterator](i, k) << ", ";
-            }
-        }
-        myfile2 << endl;
-    }
-    myfile2.close();
+}
 
+void Waveequation::save(int steps){
+    string path = "bin/" + filename;
+    if(!myfile1.is_open()){ // test if file is open
+        myfile1.open(path.c_str()); // if not open the file
+    }
+    for (int i = 0; i < u[steps].rows(); i++ ){
+        for (int k = 0; k < u[steps].cols(); k++){ // i am not 100% certain about the u.cols()
+            myfile1 << u[steps](i, k) << ", ";
+        }
+    }
+    myfile1 << endl;
 }
 
 void Waveequation::Integration( double t_max, double Delta_x, double Delta_y, Start_values Starting_values){
@@ -96,22 +80,31 @@ void Waveequation::Integration( double t_max, double Delta_x, double Delta_y, St
 
     for (int steps = 1; steps < int(t_max/delta_t) - 1; steps++){ // time iteration
         for(int i = 0; i < int(L[0]/Delta_x); i++){
-            u[steps](i, 0) = 0; // fixed frame
-            u[steps](i, int(L[1]/Delta_y) - 1) = 0;
+            u[1](i, 0) = 0; // fixed frame
+            u[1](i, int(L[1]/Delta_y) - 1) = 0;
         }
         for(int j = 0; j < int(L[1]/Delta_y); j++){
-            u[steps](0, j) = 0; // fixed frame
-            u[steps](int(L[0]/Delta_x) - 1, j) = 0;            
+            u[1](0, j) = 0; // fixed frame
+            u[1](int(L[0]/Delta_x) - 1, j) = 0;            
         }
         for(int i = 1; i < int(L[0]/Delta_x) - 1; i++){ // the x coordinate for the membrane
             for(int j = 1; j < int(L[1]/Delta_y) - 1; j++){ // y coordinate of the membrane
-                u[steps + 1](i, j) = 2*u[steps](i, j) - u[steps - 1](i, j) 
+                u[1 + 1](i, j) = 2*u[1](i, j) - u[1 - 1](i, j) 
                 + pow(delta_t,2)
-                * ((u[steps](i + 1, j) - 2*u[steps](i, j) + u[steps](i - 1, j))/pow(Delta_x, 2) 
-                + (u[steps](i, j + 1) - 2*u[steps](i, j) + u[steps](i, j - 1))/pow(Delta_y, 2)); // the scheme from the sheet with c=1
+                * ((u[1](i + 1, j) - 2*u[1](i, j) + u[1](i - 1, j))/pow(Delta_x, 2) 
+                + (u[1](i, j + 1) - 2*u[1](i, j) + u[1](i, j - 1))/pow(Delta_y, 2)); // the scheme from the sheet with c=1
             }
         }
+        if(steps % 100 == 0){
+            save(2);
+        }
+        u[0] = u[1];
+        u[1] = u[2];
+        cout << "\r" << double(steps)/((t_max/delta_t) - 1) *100 << "%";
     }
+    cout << endl;
+    myfile1.close();
+    myfile2.close();
 }
 
 
@@ -134,10 +127,8 @@ int main(void) {
         starting.Starting_condition = Starting_condition; // u(x,y,0)
         starting.v_0 = v_0; // du(x,y,t=0)/dt 
 
-        Waveequation waveequation(L, t_max, delta_t, Delta_x, Delta_y);
-
+        Waveequation waveequation(L, t_max, delta_t, Delta_x, Delta_y, "wiggle_that_membrane.csv");
         waveequation.Integration(t_max, Delta_x, Delta_y, starting);
-        waveequation.save("wiggle_that_membrane.csv");
     }
     return 0;
 }

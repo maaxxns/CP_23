@@ -4,6 +4,7 @@
 #include <fstream>
 #include <vector>
 #include <Eigen/Dense>
+#include <chrono>
 using namespace std;
 using namespace Eigen;
 using std::ofstream;
@@ -17,7 +18,7 @@ class Schroedinger
     public:
        Schroedinger(Vector2d L, double Delta_x, double delta_t, string path1); // constructor
        void time_evolution(double t_max); // applies the time evolution operator to the wavefunction
-       void wavefunction(double sigma = 1., double xi_0 = 10.); // calcultes the wave function
+       void wavefunction(double sigma = 1., double xi_0 = 1); // calcultes the wave function
     
     private:
        Matrix< complex<double>, Dynamic, Dynamic > Hamilton(); // calculates the Hamilton operator
@@ -53,8 +54,11 @@ void Schroedinger::time_evolution(double t_max){
     Matrix< complex<double>, Dynamic, Dynamic > A_1 = A(delta_t);
     for(int steps = 0; steps < int(t_max/delta_t); steps++){
         psi[2] = A_1 * psi[1]; // time evolution matrix
-        save(2); // save it
+        if(steps % 1 == 0){//save just every xth frame
+            save(2); // save it
+        }
         psi[1] = psi[2]; // and make it the next step
+        cout << "\r" << double(steps)/(int(t_max/delta_t)) *100 << "%";
     }
     file.close();
 }
@@ -66,17 +70,16 @@ void Schroedinger::save(int steps){
     double sum;
     for (int i = 0; i < psi[steps].size(); i++){
         file << pow(abs(psi[steps][i]), 2) << ", "; // now write every entranc of the vector in the file
-        sum =+ pow(abs(psi[steps][i]), 2);
+        sum += pow(abs(psi[steps][i]), 2);
     }
-    cout << sum << endl;
     file << endl; // after that end the line
     if(steps == 1){
         ofstream myfile1;
         myfile1.open("bin/hamilton.csv");
-        Matrix< complex<double>, Dynamic, Dynamic > A_1 = A(delta_t);
-        for (int i = 0; i < A_1.rows(); i++){
-            for(int j = 0; j < A_1.cols(); j++){
-                myfile1 << A_1(i,j) << ", ";
+        Matrix< complex<double>, Dynamic, Dynamic > M = Hamilton();
+        for (int i = 0; i < M.rows(); i++){
+            for(int j = 0; j < M.cols(); j++){
+                myfile1 << M(i,j) << ", ";
             }
             myfile1 << endl;
         }
@@ -122,15 +125,18 @@ Matrix< complex<double>, Dynamic, Dynamic > Schroedinger::Ones(){ // makes a nxm
 void Schroedinger::wavefunction(double sigma, double xi_0){
     complex<double> sum;
     for (int i = 0; i < int((L[1] - L[0])/Delta_x); i++){
-        psi[0][i] = pow(1./(2. * M_PI * sigma), 0.25) + exp( -pow(Delta_x * i - xi_0 , 2)/(4 * sigma));
+        psi[0][i] = pow(1./(2. * M_PI * sigma), 0.25) * exp( -pow((Delta_x * double(i) + L[0]) - xi_0 , 2)/(4 * sigma)); // not sure if i - L[0] is correct
+    }
+    for (int i = 0; i < int((L[1] - L[0])/Delta_x); i++){
         sum += pow(abs(psi[0][i]),2); // norm with the squared norm
     }
-    psi[0] = 1./sum * psi[0]; // apply squared norm
+    cout << "Before norm " << sum << endl;
+    psi[0] = 1./sqrt(sum) * psi[0]; // apply squared norm
     sum = 0.;
     for (int i = 0; i < int((L[1] - L[0])/Delta_x); i++){
-        sum +=pow(abs(psi[0][i]),2); // test if its applied correctly
+        sum += pow(abs(psi[0][i]),2); // test if its applied correctly
     }
-    cout << sum << endl;
+    cout << "After norm " << sum << endl;
 }
 
 
@@ -138,11 +144,12 @@ int main() {
     Vector2d L(-10., 10.);
     double Delta_x = 0.1;
     double t_max = 10.;
-    double delta_t = 0.02;
+    double delta_t = 0.02; // works with x = 0.1 t = 0.002
     string path = "schroedinger.csv";
 
+
     Schroedinger Schroedinger(L, Delta_x, delta_t, path);
-    Schroedinger.wavefunction();
+    Schroedinger.wavefunction(); // make the initial wave function
     Schroedinger.time_evolution(t_max);
 
     return 0;
