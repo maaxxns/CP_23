@@ -133,7 +133,7 @@ int main(){
     Dynamic2D Id = Dynamic2D::Identity(dimension, dimension); //identity matrix
 
 
-
+    ofstream H_csv("H.csv");
     Dynamic2D H = Dynamic2D::Zero(dimension, dimension); // generating matrix with zeros and dimension
     double Delta_xi_2 = Delta_xi*Delta_xi; // short for Delta_xi^2
     Id_r.topRightCorner(dimension-1, dimension-1) = Dynamic2D::Identity(dimension-1, dimension-1); // right id matrix
@@ -141,8 +141,10 @@ int main(){
     H = -1./Delta_xi_2*(Id_r+Id_l);
 
     for (int n=0; n<dimension; n++){
-        H(n,n) = 2./Delta_xi_2 + n*n;
+        H(n,n) = 2./Delta_xi_2 + n*n*Delta_xi_2;
     }
+    H_csv << H;
+    H_csv.close();
 
 
 
@@ -162,13 +164,10 @@ int main(){
     ofstream Psi_csv("Psi.csv");
     Dynamic2D S_H = (Id + 1.0i/2. * H * Delta_tau).inverse() * (Id-1.0i/2. * H * Delta_tau); 
     int timesteps = fin_time/Delta_tau;
-    for(int i = 0; i<= timesteps; i++){
+    for(int i = 0; i< timesteps; i++){
         Psi = S_H * Psi;
         VectorXd Psi_2 = Psi.cwiseAbs().cwiseProduct(Psi.cwiseAbs());
         Psi_csv << Psi_2.transpose() << endl;
-         //   for(int j = 0; j < dimension; j++){
-       //         Psi_csv << Psi_2(j) << ',' << endl;
-     //       }
     }
     Psi_csv.close();
 

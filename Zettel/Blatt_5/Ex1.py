@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 data = np.genfromtxt('Psi.csv')
 #data = data.T
 print(data.shape)
+print(len(data[0,:]))
 frame_number = 100
 
 iterator = len(data[:,0]) // frame_number
