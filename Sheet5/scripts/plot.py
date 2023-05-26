@@ -24,4 +24,4 @@ ax.set_title('Wave equation')
 ax.set_xlabel("x")
 ax.set_ylabel("y")
 anim = FuncAnimation(fig, animate, frames=100, interval=20, blit=True) #intervall is time between frames, blit is only frames that changed are redrawn
-anim.save('build/wave.mp4', fps=15, extra_args=['-vcodec', 'libx264'])
+anim.save('build/wave.gif',writer='pillow', fps=15) #, extra_args=['-vcodec', 'libx264']

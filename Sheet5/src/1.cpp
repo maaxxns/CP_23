@@ -103,7 +103,7 @@ Matrix< complex<double>, Dynamic, Dynamic > Schroedinger::Hamilton(){
     Matrix< complex<double>, Dynamic, Dynamic> Hamilton(N,N); // matrix nxm
     //Hamilton.resize(N,N);
     for (int n = 0; n < N; n++){ 
-            Hamilton(n, n) = -1./pow(Delta_x, 2) * ( -2. ) + pow(Delta_x, 2) * pow(n, 2); // this n is weird
+            Hamilton(n, n) = -1./pow(Delta_x, 2) * ( -2. ) + pow(Delta_x, 2) * pow(n, 2); // if the potential is supossed to be symmetrical add + int(L[0]/Delta_x) in pow(n,2)
             if(n > 0){
                 Hamilton(n, n - 1) = -1./pow(Delta_x,2)*( 1 );
             }

@@ -34,4 +34,4 @@ ax.set_xlabel("x")
 ax.set_ylabel("Probability")
 line, = ax.plot(x, data[0,:])
 anim = FuncAnimation(fig, update, frames=frame_number, interval=20) #intervall is time between frames, blit is only frames that changed are redrawn
-anim.save('build/schroedinger.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
+anim.save('build/schroedinger.gif',writer='pillow', fps=30) #, extra_args=['-vcodec', 'libx264']
