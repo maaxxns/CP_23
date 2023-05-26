@@ -12,13 +12,15 @@
             i \partial_\tau \Psi = -\partial_\xi ^2 \Psi + \xi ^2 \Psi = \hat{H} \Psi
         \end{equation}
         \FloatBarrier
-
-
+        \begin{figure}
+            \includegraphics[width=\textwidth]{images/Sheet_5.pdf}
+            \caption{The non dimensionilazion of the Schrödinger equation.}
+        \end{figure}
         \FloatBarrier
         \item[b)]
         The next step was to implement the Cranck-Nicholson-scheme with a given Hamilton
         \begin{equation}
-            H_\text{nm} = - \frac{1}{\Delta \xi ^2} (\delta_\text{n,m-1} + \delta_\text{n,m+1} - 2\delta_\text{n,m}) + \Delta \xi 2n^2 \delta_\text{n,m} . 
+            H_\text{nm} = - \frac{1}{\Delta \xi ^2} (\delta_\text{n,m-1} + \delta_\text{n,m+1} - 2\delta_\text{n,m}) + \Delta \xi^2 n^2 \delta_\text{n,m} . 
         \end{equation}
         We implemented the scheme in the source file 1.cpp in function "time\_evolution".
         The time evolution matrix is calculated by function "A".
@@ -42,9 +44,12 @@
         Note that we also made an animation with a different Hamilton.
         The different Hamilton that we used has a symmetrical potetial around $\xi = 0$, this animation is called "schroedinger\_asitshouldbe.gif".
         For this we changed the $\Delta \xi 2n^2 \delta_\text{n,m}$ to $\Delta \xi 2(n - \frac{10}{\Delta \xi})^2 \delta_\text{n,m}$ which makes the potential symmetrical.
-        \FloatBarrier
+
+    \end{itemize}
+\end{itemize}
+\begin{itemize}
     \item[2.]
-    \FloatBarrier
+    \begin{itemize}
         In the second execerise of this sheet we were asked to solve the wave equation in two dimensions.
         \item[a)]
         First we were supossed to discretize the wave equation.
@@ -71,7 +76,6 @@
         \FloatBarrier
         The last step before implementing was to non dimensionlize the wave equation.
         You can find our solution below 
-
         \FloatBarrier
         \item[e)]
         Now we can implement the whole scheme and solve the wave equation in two dimensions in time.
