@@ -30,18 +30,31 @@ plt.close()
 # Poincare slice
 
 ########################################################
+dZ = np.zeros(len(data_r_20))
+for i in range(len(data_r_20) - 1):
+    dZ[i] = data_r_20[i,2] - data_r_20[i + 1,2]
 
-mask = np.ma.getmask(np.ma.masked_inside(data_r_20[:,2],19,20))
+mask1 = dZ < 0
+mask2 = np.ma.getmask(np.ma.masked_inside(data_r_20[:,2],19,20))
+
+mask = (mask1 == 1) & (mask2 == 1)
 
 plt.scatter(data_r_20[:,0][mask], data_r_20[:,1][mask])
-plt.title("Poincare slice of Z=20")
+plt.title("Poincare slice of Z=20, dZ < 0")
 plt.ylabel("y")
 plt.xlabel("x") 
 plt.savefig("build/Lorentz_r_20_slice.pdf")
-
-mask = np.ma.getmask(np.ma.masked_inside(data_r_28[:,2],19.5,20.5))
-
 plt.close()
+
+dZ = np.zeros(len(data_r_28))
+for i in range(len(data_r_28) - 1):
+    dZ[i] = data_r_28[i,2] - data_r_28[i + 1,2]
+
+mask1 = dZ < 0
+mask2 = np.ma.getmask(np.ma.masked_inside(data_r_28[:,2],19.5,20.5))
+
+mask = (mask1 == 1) & (mask2 == 1)
+
 plt.scatter(data_r_28[:,0][mask], data_r_28[:,1][mask])
 plt.title("Poincare slice of Z=20")
 plt.ylabel("y")
