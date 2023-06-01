@@ -79,10 +79,12 @@ void Bifurkationsdiagramm::save_fixpoints_log(double r_max){
         ofstream r_data_csv("./build/r_data_log"+to_string(i)+".csv");
 
         count = 0;
+        double count_pre;
         int n = 0;
 
         while(count <= 64){
             fix_point = {};
+            count_pre = count;
             double r = Delta_r * n;
             count = 0;
             logistisch_warm(r,x_0[i]);
@@ -98,7 +100,10 @@ void Bifurkationsdiagramm::save_fixpoints_log(double r_max){
                 }
                 
             }while(!(x-tolerance < fix_point[0] && fix_point[0] < x+tolerance));
-            
+            if(count == 2*count_pre){
+                cout << x_0[i] << ':' << r << ',' << count << endl;
+                
+            }
         }
         
         r_data_csv.close();
@@ -107,6 +112,8 @@ void Bifurkationsdiagramm::save_fixpoints_log(double r_max){
     r_double_data.close();
 
 }
+
+
 
 void Bifurkationsdiagramm::save_fixpoints_kub(double r_max){
     vector<double> x_0 = {0.1,0.3,0.5,0.7,0.9};
