@@ -2,6 +2,105 @@
 \section{Solution 1}
 \label{sec:auswertung}
 
+\begin{itemize}
+    \item[1.]
+    \begin{itemize}
+        Zum Warmlaufen wird die Abbildung $N=30$ mal durchiteriert. Die Zahl wird relativ willkürlich gewählt, solle aber nicht zu niedrig sein.
+
+        \item[a)]
+        Überlegungen für das Maximale $r$:
+        Werden die möglichen Werte $f(x)\equiv x_{n+1}$ gegen $x_n$ aufgetragen entstehen umgedrehte Parabeln, wobei die $x$-position des Maximums/Scheitelpunkts $r$-unabhägig ist:
+        
+        \begin{align}
+            f'(x) & = r(1-2x) \overset{!}{=} 0 \\
+            \Rightarrow x_0 & = 0.5 \\
+            \Rightarrow f(x_0) & = r(x_0-x_0^2) \overset{!}{=} 1 \\
+            \Rightarrow r & = 4
+        \end{align}
+        $r$ ist also Mximal $4$.
+
+        \item[b)]
+        Es wird grafisch herausgefunden, dass $r \leq 3$ sein darf.
+    \end{itemize}
+    \item[2./3.]
+    \begin{itemize}
+        $r$ wird systematisch in Schritten $\Delta r = 0.001$ vatiiert. Jeder $r$- Wert erzeugt jeweilige Fixpunkte, welche dann in $r$-Abhängigkeit in ein Diagramm aufgetragen werden. 
+        Es werden verschiedene Startwerte $x_0$ verwendet. 
+        \item[a)]
+        \begin{table}[h]
+            \centering
+            \caption{Werte $r_{\infty}$ für die logistische Abbildung.}
+            \sisetup{table-format=1.3}
+            \begin{tabular}{S S}
+                \toprule
+                {$x_0$} & {$r_{\infty}$} \\
+                \midrule
+                0.1 & 3.853 \\
+                0.3 & 3.632 \\
+                0.5 & 3.889 \\
+                0.7 & 3.632 \\
+                0.9 & 3.732 \\
+                
+                \bottomrule
+                
+            \end{tabular}
+
+        \end{table}
+
+
+        \begin{figure}
+            \begin{subfigure}{.6\textwidth}
+                \centering
+
+                \subcaption{$x_0 = 0.5$}
+                \includegraphics[width=.9\linewidth]{images/Bif_log2.pdf}
+            \end{subfigure}
+            \begin{subfigure}{.6\textwidth}
+                \centering
+                \subcaption{$x_0 = 0.1$}
+                \includegraphics[width=.9\linewidth]{images/Bif_log0.pdf}
+                \end{subfigure}
+            \caption{Bifurkationsdiagramm der logistischen Abbildung. }
+        \end{figure}
+        \item[b)]
+
+        \begin{table}[h]
+            \centering
+            \caption{Werte $r_{\infty}$ für die kubische Abbildung.}
+            \sisetup{table-format=1.3}
+            \begin{tabular}{S S}
+                \toprule
+                {$x_0$} & {$r_{\infty}$} \\
+                \midrule
+                0.1 & 2.421 \\
+                0.3 & 2.102 \\
+                0.5 & 2.457 \\
+                0.7 & 2.346 \\
+                0.9 & 2.323 \\
+                \bottomrule
+                
+            \end{tabular}
+
+        \end{table}
+
+        \begin{figure}
+            \begin{subfigure}{.6\textwidth}
+                \centering
+                \subcaption{$x_0 = 0.5$}
+                \includegraphics[width=.9\linewidth]{images/Bif_kub2.pdf}
+            \end{subfigure}
+            \begin{subfigure}{.6\textwidth}
+                \centering
+                \subcaption{$x_0 = 0.1$}
+                \includegraphics[width=.9\linewidth]{images/Bif_kub0.pdf}
+                \end{subfigure}
+            \caption{Bifurkationsdiagramm der kubischen Abbildung. }
+
+        \end{figure}
+    \end{itemize}
+
+\end{itemize}
+
 
 \section{Solution 2}
 \label{sec:auswertung}
