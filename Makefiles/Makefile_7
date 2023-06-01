@@ -1,0 +1,22 @@
+#More complex projects tend to produce a lot of intermediate file. 
+#Therefore, it has become a best practice to provide a clean-up 
+#routine that removes all created file.
+ODIR	= build
+
+.PHONY: all clean
+all: $(ODIR)/hello_world_with_ext_function
+
+$(ODIR)/hello_world_with_ext_function.o: hello_world_with_ext_function.cpp ext_function.hpp | $(ODIR)
+	g++ $< -c -o $@
+
+$(ODIR)/ext_function.o: ext_function.cpp ext_function.hpp | $(ODIR)
+	g++ $< -c -o $@
+
+$(ODIR)/hello_world_with_ext_function: $(ODIR)/hello_world_with_ext_function.o $(ODIR)/ext_function.o
+	g++ $^ -o $@
+
+$(ODIR):
+	mkdir $(ODIR)
+
+clean:
+	rm -rf $(ODIR)
