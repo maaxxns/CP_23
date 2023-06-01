@@ -96,3 +96,4 @@ ax.set_title("Lorenz Attractor r = 20")
 plt.savefig("build/Lorentz_r_20_3d.pdf")
 
 plt.close()
+##########################################################################
