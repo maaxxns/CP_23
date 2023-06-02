@@ -1,0 +1,7 @@
+#build hello world into build folder
+
+build/hello_world: hello_world.cpp | build
+	g++ $< -o $@
+
+build:
+	mkdir build

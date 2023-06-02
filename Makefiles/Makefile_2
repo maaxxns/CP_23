@@ -1,0 +1,4 @@
+#build hello world for lazy programmers
+
+hello_world: hello_world.cpp
+	g++ $< -o $@
