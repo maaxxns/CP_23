@@ -4,7 +4,7 @@
 plots: bin/*.csv | build
 	python scripts/plot.py
 
-bin/*.csv: bin/Ex1 | bin 
+bin/*.csv: bin/Ex1 | build
 	./bin/Ex1 
 
 bin/Ex1: src/Ex1.cpp | bin 

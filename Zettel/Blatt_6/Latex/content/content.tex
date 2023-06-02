@@ -17,7 +17,7 @@
             \Rightarrow f(x_0) & = r(x_0-x_0^2) \overset{!}{=} 1 \\
             \Rightarrow r & = 4
         \end{align}
-        $r$ ist also Mximal $4$.
+        $r$ ist also maximal $4$.
 
         \item[b)]
         Es wird grafisch herausgefunden, dass $r \leq 3$ sein darf.
@@ -27,9 +27,11 @@
         $r$ wird systematisch in Schritten $\Delta r = 0.001$ vatiiert. Jeder $r$- Wert erzeugt jeweilige Fixpunkte, welche dann in $r$-Abhängigkeit in ein Diagramm aufgetragen werden. 
         Es werden verschiedene Startwerte $x_0$ verwendet. 
         \item[a)]
+        In den Tabellen \ref{tab:log} und \ref{tab:kub} sind die $r$-Werte angegeben, ab denen die Anzahl Fixpunkte größer als $64$ wird.
         \begin{table}[h]
             \centering
             \caption{Werte $r_{\infty}$ für die logistische Abbildung.}
+            \label{tab:log}
             \sisetup{table-format=1.3}
             \begin{tabular}{S S}
                 \toprule
@@ -67,6 +69,7 @@
         \begin{table}[h]
             \centering
             \caption{Werte $r_{\infty}$ für die kubische Abbildung.}
+            \label{tab:kub}
             \sisetup{table-format=1.3}
             \begin{tabular}{S S}
                 \toprule
@@ -98,6 +101,10 @@
 
         \end{figure}
     \end{itemize}
+
+    Leider hat das bestimmen der Feigenbaumkonstante nicht gut funktioniert. 
+    Im Terminal werden beim Ausführen des Codes die $r$-Werte ausgegeben, bei denen sich die Anzahl Fixpunkte gegenüber dem vorherigen $r$ ändern.
+    Leider kommen da nicht so sinnvolle Anzahlen von Fixpunkten bei rum... 
 
 \end{itemize}
 
