@@ -1,13 +1,16 @@
 .PHONY: all
  
+Ex	= Ex1
+
+all: bin/*.csv 
 
 plots: bin/*.csv | build
 	python scripts/plot.py
 
-bin/*.csv: bin/Ex1 | bin 
-	./bin/Ex1 
+bin/*.csv: bin/$(Ex) | bin 
+	./bin/$(Ex) 
 
-bin/Ex1: src/Ex1.cpp | bin 
+bin/$(Ex): src/$(Ex).cpp | bin 
 	g++ $^ -O3 -o $@
 
  
