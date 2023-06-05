@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.17.0 (TeX Live 2023)  (format=lualatex 2023.5.7)  1 JUN 2023 22:46
+This is LuaHBTeX, Version 1.16.0 (TeX Live 2023)  (format=lualatex 2023.4.14)  2 JUN 2023 14:39
  restricted system commands enabled.
 **main.tex
 (./main.tex
@@ -32,19 +32,19 @@ Inserting `luaotfload.aux.patch_cambria_domh' in `luaotfload.patch_font'.
 Inserting `luaotfload.aux.fixup_fontdata' in `luaotfload.patch_font_unsafe'.
 Inserting `luaotfload.aux.set_capheight' in `luaotfload.patch_font'.
 Inserting `luaotfload.aux.set_xheight' in `luaotfload.patch_font'.
-Inserting `luaotfload.rewrite_fontname' in `luaotfload.patch_font'. L3 programming layer <2023-05-05>
+Inserting `luaotfload.rewrite_fontname' in `luaotfload.patch_font'. L3 programming layer <2023-03-30>
 Inserting `tracingstacklevels' in `input_level_string'. (./header.tex (/home/johannes/.local/texlive/2023/texmf-dist/tex/latex/koma-script/scrartcl.cls
-Document Class: scrartcl 2023/04/24 v3.40 KOMA-Script document class (article)
+Document Class: scrartcl 2022/10/12 v3.38 KOMA-Script document class (article)
 (/home/johannes/.local/texlive/2023/texmf-dist/tex/latex/koma-script/scrkbase.sty
-Package: scrkbase 2023/04/24 v3.40 KOMA-Script package (KOMA-Script-dependent basics and keyval usage)
+Package: scrkbase 2022/10/12 v3.38 KOMA-Script package (KOMA-Script-dependent basics and keyval usage)
  (/home/johannes/.local/texlive/2023/texmf-dist/tex/latex/koma-script/scrbase.sty
-Package: scrbase 2023/04/24 v3.40 KOMA-Script package (KOMA-Script-independent basics and keyval usage)
+Package: scrbase 2022/10/12 v3.38 KOMA-Script package (KOMA-Script-independent basics and keyval usage)
  (/home/johannes/.local/texlive/2023/texmf-dist/tex/latex/koma-script/scrlfile.sty
-Package: scrlfile 2023/04/24 v3.40 KOMA-Script package (file load hooks)
+Package: scrlfile 2022/10/12 v3.38 KOMA-Script package (file load hooks)
  (/home/johannes/.local/texlive/2023/texmf-dist/tex/latex/koma-script/scrlfile-hook.sty
-Package: scrlfile-hook 2023/04/24 v3.40 KOMA-Script package (using LaTeX hooks)
+Package: scrlfile-hook 2022/10/12 v3.38 KOMA-Script package (using LaTeX hooks)
  (/home/johannes/.local/texlive/2023/texmf-dist/tex/latex/koma-script/scrlogo.sty
-Package: scrlogo 2023/04/24 v3.40 KOMA-Script package (logo)
+Package: scrlogo 2022/10/12 v3.38 KOMA-Script package (logo)
 ))) (/home/johannes/.local/texlive/2023/texmf-dist/tex/latex/graphics/keyval.sty
 Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
 \KV@toks@=\toks16
@@ -52,19 +52,19 @@ Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
 Applying: [2021/05/01] Usage of raw or classic option list on input line 252.
 Already applied: [0000/00/00] Usage of raw or classic option list on input line 368.
 )) (/home/johannes/.local/texlive/2023/texmf-dist/tex/latex/koma-script/tocbasic.sty
-Package: tocbasic 2023/04/24 v3.40 KOMA-Script package (handling toc-files)
+Package: tocbasic 2022/10/12 v3.38 KOMA-Script package (handling toc-files)
 \scr@dte@tocline@numberwidth=\skip48
 \scr@dte@tocline@numbox=\box51
 )
 Package tocbasic Info: omitting babel extension for `toc'
 (tocbasic)             because of feature `nobabel' available
-(tocbasic)             for `toc' on input line 133.
+(tocbasic)             for `toc' on input line 135.
 Class scrartcl Info: File `scrsize11pt.clo' used instead of
-(scrartcl)           file `scrsize11.clo' to setup font sizes on input line 2418.
+(scrartcl)           file `scrsize11.clo' to setup font sizes on input line 2367.
  (/home/johannes/.local/texlive/2023/texmf-dist/tex/latex/koma-script/scrsize11pt.clo
-File: scrsize11pt.clo 2023/04/24 v3.40 KOMA-Script font size class option (11pt)
+File: scrsize11pt.clo 2022/10/12 v3.38 KOMA-Script font size class option (11pt)
 luaotfload | db : Font names database loaded from /home/johannes/.local/texlive/2023/texmf-var/luatex-cache/generic/names/luaotfload-names.luc.gz) (/home/johannes/.local/texlive/2023/texmf-dist/tex/latex/koma-script/typearea.sty
-Package: typearea 2023/04/24 v3.40 KOMA-Script package (type area)
+Package: typearea 2022/10/12 v3.38 KOMA-Script package (type area)
 \ta@bcor=\skip49
 \ta@div=\count183
 \ta@hblk=\skip50
@@ -87,7 +87,7 @@ Package typearea Info: These are the values describing the layout:
 (typearea)              \topskip        = 11.0pt
 (typearea)              \footskip       = 47.6pt
 (typearea)              \baselineskip   = 13.6pt
-(typearea)              on input line 1798.
+(typearea)              on input line 1767.
 )
 \c@part=\count184
 \c@section=\count185
@@ -97,53 +97,53 @@ Package typearea Info: These are the values describing the layout:
 \c@subparagraph=\count189
 \scr@dte@section@maxnumwidth=\skip54
 Class scrartcl Info: using compatibility default `runin=bysign'
-(scrartcl)           for `\section on input line 5046.
+(scrartcl)           for `\section on input line 4994.
 Class scrartcl Info: using compatibility default `afterindent=bysign'
-(scrartcl)           for `\section on input line 5046.
+(scrartcl)           for `\section on input line 4994.
 \scr@dte@part@maxnumwidth=\skip55
 Class scrartcl Info: using compatibility default `afterindent=false'
-(scrartcl)           for `\part on input line 5054.
+(scrartcl)           for `\part on input line 5002.
 \scr@dte@subsection@maxnumwidth=\skip56
 Class scrartcl Info: using compatibility default `runin=bysign'
-(scrartcl)           for `\subsection on input line 5064.
+(scrartcl)           for `\subsection on input line 5012.
 Class scrartcl Info: using compatibility default `afterindent=bysign'
-(scrartcl)           for `\subsection on input line 5064.
+(scrartcl)           for `\subsection on input line 5012.
 \scr@dte@subsubsection@maxnumwidth=\skip57
 Class scrartcl Info: using compatibility default `runin=bysign'
-(scrartcl)           for `\subsubsection on input line 5074.
+(scrartcl)           for `\subsubsection on input line 5022.
 Class scrartcl Info: using compatibility default `afterindent=bysign'
-(scrartcl)           for `\subsubsection on input line 5074.
+(scrartcl)           for `\subsubsection on input line 5022.
 \scr@dte@paragraph@maxnumwidth=\skip58
 Class scrartcl Info: using compatibility default `runin=bysign'
-(scrartcl)           for `\paragraph on input line 5085.
+(scrartcl)           for `\paragraph on input line 5033.
 Class scrartcl Info: using compatibility default `afterindent=bysign'
-(scrartcl)           for `\paragraph on input line 5085.
+(scrartcl)           for `\paragraph on input line 5033.
 \scr@dte@subparagraph@maxnumwidth=\skip59
 Class scrartcl Info: using compatibility default `runin=bysign'
-(scrartcl)           for `\subparagraph on input line 5095.
+(scrartcl)           for `\subparagraph on input line 5043.
 Class scrartcl Info: using compatibility default `afterindent=bysign'
-(scrartcl)           for `\subparagraph on input line 5095.
+(scrartcl)           for `\subparagraph on input line 5043.
 \abovecaptionskip=\skip60
 \belowcaptionskip=\skip61
 \c@pti@nb@sid@b@x=\box52
 Package tocbasic Info: omitting babel extension for `lof'
 (tocbasic)             because of feature `nobabel' available
-(tocbasic)             for `lof' on input line 6263.
+(tocbasic)             for `lof' on input line 6211.
 \scr@dte@figure@maxnumwidth=\skip62
 \c@figure=\count190
 Package tocbasic Info: omitting babel extension for `lot'
 (tocbasic)             because of feature `nobabel' available
-(tocbasic)             for `lot' on input line 6279.
+(tocbasic)             for `lot' on input line 6227.
 \scr@dte@table@maxnumwidth=\skip63
 \c@table=\count191
-Class scrartcl Info: Redefining `\numberline' on input line 6449.
+Class scrartcl Info: Redefining `\numberline' on input line 6397.
 \bibindent=\dimen139
 ) (/home/johannes/.local/texlive/2023/texmf-dist/tex/latex/koma-script/scrhack.sty
-Package: scrhack 2023/04/24 v3.40 KOMA-Script package (hacking other packages)
+Package: scrhack 2022/10/12 v3.38 KOMA-Script package (hacking other packages)
  (/home/johannes/.local/texlive/2023/texmf-dist/tex/latex/xpatch/xpatch.sty (/home/johannes/.local/texlive/2023/texmf-dist/tex/latex/l3kernel/expl3.sty
-Package: expl3 2023-05-05 L3 programming layer (loader) 
+Package: expl3 2023-03-30 L3 programming layer (loader) 
  (/home/johannes/.local/texlive/2023/texmf-dist/tex/latex/l3backend/l3backend-luatex.def
-File: l3backend-luatex.def 2023-04-19 L3 backend support: PDF output (LuaTeX)
+File: l3backend-luatex.def 2023-03-30 L3 backend support: PDF output (LuaTeX)
 \l__color_backend_stack_int=\count192
 Inserting `l3color' in `luaotfload.parse_color'.
 \l__pdf_internal_box=\box53
@@ -322,7 +322,7 @@ Package typearea Info: These are the values describing the layout:
 (typearea)              \baselineskip   = 13.6pt
 (typearea)              on input line 29.
  (/home/johannes/.local/texlive/2023/texmf-dist/tex/generic/babel/babel.sty
-Package: babel 2023/04/18 3.88 The Babel package
+Package: babel 2023/03/28 3.87 The Babel package
  (/home/johannes/.local/texlive/2023/texmf-dist/tex/generic/babel/luababel.def
 \bbl@readstream=\read2
 \l@dumylang=\language2
@@ -423,8 +423,7 @@ Package babel Info: Non-standard hyphenation setup on input line 118.
 )
 Package babel Info: Main language set with 'main='. Except if you have
 (babel)             problems, prefer the default mechanism for setting
-(babel)             the main language, ie, as the last declared.
-(babel)             Reported on input line 4352.
+(babel)             the main language. Reported on input line 4339.
  (/home/johannes/.local/texlive/2023/texmf-dist/tex/generic/babel-german/ngerman.ldf
 Language: ngerman 2021/02/27 v2.13 German support for babel (post-1996 orthography)
  (/home/johannes/.local/texlive/2023/texmf-dist/tex/generic/babel-german/ngermanb.ldf
@@ -828,7 +827,7 @@ Package: float 2001/11/08 v1.3d Float enhancements (AL)
 )
 Package scrhack Info: loading float hack on input line 78.
  (/home/johannes/.local/texlive/2023/texmf-dist/tex/latex/koma-script/float.hak
-File: float.hak 2023/04/24 v3.40 KOMA-Script scrhack part (hacking package float)
+File: float.hak 2022/10/12 v3.38 KOMA-Script scrhack part (hacking package float)
 Package scrhack Info: redefining \newfloat on input line 163.
 Package scrhack Info: redefining \listof on input line 163.
 Package scrhack Info: undefining \float@addtolists on input line 163.
@@ -843,7 +842,7 @@ Package: lscape 2020/05/28 v3.02 Landscape Pages (DPC)
 )
 Package scrhack Info: loading lscape hack on input line 77.
  (/home/johannes/.local/texlive/2023/texmf-dist/tex/latex/koma-script/lscape.hak
-File: lscape.hak 2023/04/24 v3.40 KOMA-Script scrhack part (hacking package lscape)
+File: lscape.hak 2022/10/12 v3.38 KOMA-Script scrhack part (hacking package lscape)
 Package scrhack Info: \landscape patched to make \textheight change optional on input line 90.
 \scrh@LT@textheight=\skip84
 )
@@ -1171,7 +1170,7 @@ Package biblatex Info: LuaTeX detected.
 (biblatex)             Assuming input encoding 'utf8'.
 Package biblatex Info: Document encoding is UTF8 ....
 Package biblatex Info: ... and expl3
-(biblatex)             2023-05-05 L3 programming layer (loader) 
+(biblatex)             2023-03-30 L3 programming layer (loader) 
 (biblatex)             is new enough (at least 2020/04/06),
 (biblatex)             setting 'casechanger=expl3'.
  (/home/johannes/.local/texlive/2023/texmf-dist/tex/latex/biblatex/blx-case-expl3.sty
@@ -1181,7 +1180,7 @@ Package scrhack Info: hyperref hack deactivated because of
 (scrhack)             detection of KOMA-Script class, that doesn't
 (scrhack)             need that hack, on input line 134.
  (/home/johannes/.local/texlive/2023/texmf-dist/tex/latex/hyperref/hyperref.sty
-Package: hyperref 2023-04-22 v7.00x Hypertext links for LaTeX
+Package: hyperref 2023-02-07 v7.00v Hypertext links for LaTeX
  (/home/johannes/.local/texlive/2023/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
 Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
 ) (/home/johannes/.local/texlive/2023/texmf-dist/tex/generic/pdfescape/pdfescape.sty
@@ -1205,25 +1204,27 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 \Hy@linkcounter=\count456
 \Hy@pagecounter=\count457
  (/home/johannes/.local/texlive/2023/texmf-dist/tex/latex/hyperref/pd1enc.def
-File: pd1enc.def 2023-04-22 v7.00x Hyperref: PDFDocEncoding definition (HO)
+File: pd1enc.def 2023-02-07 v7.00v Hyperref: PDFDocEncoding definition (HO)
 ) (/home/johannes/.local/texlive/2023/texmf-dist/tex/generic/intcalc/intcalc.sty
 Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+) (/home/johannes/.local/texlive/2023/texmf-dist/tex/generic/etexcmds/etexcmds.sty
+Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
 )
 \Hy@SavedSpaceFactor=\count458
  (/home/johannes/.local/texlive/2023/texmf-dist/tex/latex/hyperref/puenc.def
-File: puenc.def 2023-04-22 v7.00x Hyperref: PDF Unicode definition (HO)
+File: puenc.def 2023-02-07 v7.00v Hyperref: PDF Unicode definition (HO)
 )
-Package hyperref Info: Option `unicode' set `true' on input line 4065.
-Package hyperref Info: Option `pdfusetitle' set `true' on input line 4065.
-Package hyperref Info: Hyper figures OFF on input line 4182.
-Package hyperref Info: Link nesting OFF on input line 4187.
-Package hyperref Info: Hyper index ON on input line 4190.
-Package hyperref Info: Plain pages OFF on input line 4197.
-Package hyperref Info: Backreferencing OFF on input line 4202.
+Package hyperref Info: Option `unicode' set `true' on input line 4060.
+Package hyperref Info: Option `pdfusetitle' set `true' on input line 4060.
+Package hyperref Info: Hyper figures OFF on input line 4177.
+Package hyperref Info: Link nesting OFF on input line 4182.
+Package hyperref Info: Hyper index ON on input line 4185.
+Package hyperref Info: Plain pages OFF on input line 4192.
+Package hyperref Info: Backreferencing OFF on input line 4197.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
-Package hyperref Info: Bookmarks ON on input line 4449.
+Package hyperref Info: Bookmarks ON on input line 4425.
 \c@Hy@tempcnt=\count459
-LaTeX Info: Redefining \url on input line 4787.
+LaTeX Info: Redefining \url on input line 4763.
 \XeTeXLinkMargin=\dimen265
  (/home/johannes/.local/texlive/2023/texmf-dist/tex/generic/bitset/bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
@@ -1231,13 +1232,13 @@ Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
 \Fld@menulength=\count460
 \Field@Width=\dimen266
 \Fld@charsize=\dimen267
-Package hyperref Info: Hyper figures OFF on input line 6066.
-Package hyperref Info: Link nesting OFF on input line 6071.
-Package hyperref Info: Hyper index ON on input line 6074.
-Package hyperref Info: backreferencing OFF on input line 6081.
-Package hyperref Info: Link coloring OFF on input line 6086.
-Package hyperref Info: Link coloring with OCG OFF on input line 6091.
-Package hyperref Info: PDF/A mode OFF on input line 6096.
+Package hyperref Info: Hyper figures OFF on input line 6042.
+Package hyperref Info: Link nesting OFF on input line 6047.
+Package hyperref Info: Hyper index ON on input line 6050.
+Package hyperref Info: backreferencing OFF on input line 6057.
+Package hyperref Info: Link coloring OFF on input line 6062.
+Package hyperref Info: Link coloring with OCG OFF on input line 6067.
+Package hyperref Info: PDF/A mode OFF on input line 6072.
  (/home/johannes/.local/texlive/2023/texmf-dist/tex/latex/base/atbegshi-ltx.sty
 Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
 package with kernel methods
@@ -1248,7 +1249,7 @@ package with kernel methods
 )
 Package hyperref Info: Driver (autodetected): hluatex.
  (/home/johannes/.local/texlive/2023/texmf-dist/tex/latex/hyperref/hluatex.def
-File: hluatex.def 2023-04-22 v7.00x Hyperref driver for luaTeX
+File: hluatex.def 2023-02-07 v7.00v Hyperref driver for luaTeX
  (/home/johannes/.local/texlive/2023/texmf-dist/tex/generic/stringenc/stringenc.sty
 Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO)
 )
@@ -1421,51 +1422,51 @@ LaTeX Warning: No \author given.
 
 (./content/content.tex
 LaTeX Font Info:    Font shape `TU/LatinModernMath(2)/m/n' will be
-(Font)              scaled to size 5.00053pt on input line 32.
+(Font)              scaled to size 5.00053pt on input line 33.
 LaTeX Font Info:    Font shape `TU/LatinModernMath(3)/m/n' will be
-(Font)              scaled to size 4.99947pt on input line 32.
+(Font)              scaled to size 4.99947pt on input line 33.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 LaTeX Font Info:    Font shape `TU/LatinModernMath(2)/m/n' will be
-(Font)              scaled to size 9.00096pt on input line 55.
+(Font)              scaled to size 9.00096pt on input line 57.
 LaTeX Font Info:    Font shape `TU/LatinModernMath(2)/m/n' will be
-(Font)              scaled to size 6.00064pt on input line 55.
+(Font)              scaled to size 6.00064pt on input line 57.
 LaTeX Font Info:    Font shape `TU/LatinModernMath(3)/m/n' will be
-(Font)              scaled to size 8.99904pt on input line 55.
+(Font)              scaled to size 8.99904pt on input line 57.
 LaTeX Font Info:    Font shape `TU/LatinModernMath(3)/m/n' will be
-(Font)              scaled to size 5.99936pt on input line 55.
-<images/Bif_log2.pdf, id=4, 462.528pt x 346.896pt>
+(Font)              scaled to size 5.99936pt on input line 57.
+<images/Bif_log2.pdf, id=6, 462.528pt x 346.896pt>
 File: images/Bif_log2.pdf Graphic file (type pdf)
 <use images/Bif_log2.pdf>
-Package luatex.def Info: images/Bif_log2.pdf  used on input line 56.
+Package luatex.def Info: images/Bif_log2.pdf  used on input line 58.
 (luatex.def)             Requested size: 225.85875pt x 169.39297pt.
-<images/Bif_log0.pdf, id=5, 462.528pt x 346.896pt>
+<images/Bif_log0.pdf, id=7, 462.528pt x 346.896pt>
 File: images/Bif_log0.pdf Graphic file (type pdf)
 <use images/Bif_log0.pdf>
-Package luatex.def Info: images/Bif_log0.pdf  used on input line 61.
+Package luatex.def Info: images/Bif_log0.pdf  used on input line 63.
 (luatex.def)             Requested size: 225.85875pt x 169.39297pt.
 
-Overfull \hbox (86.08708pt too wide) in paragraph at lines 52--63
+Overfull \hbox (86.08708pt too wide) in paragraph at lines 54--65
 [][] [] 
  []
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<images/Bif_kub2.pdf, id=6, 462.528pt x 346.896pt>
+<images/Bif_kub2.pdf, id=8, 462.528pt x 346.896pt>
 File: images/Bif_kub2.pdf Graphic file (type pdf)
 <use images/Bif_kub2.pdf>
-Package luatex.def Info: images/Bif_kub2.pdf  used on input line 90.
+Package luatex.def Info: images/Bif_kub2.pdf  used on input line 93.
 (luatex.def)             Requested size: 225.85875pt x 169.39297pt.
-<images/Bif_kub0.pdf, id=7, 462.528pt x 346.896pt>
+<images/Bif_kub0.pdf, id=9, 462.528pt x 346.896pt>
 File: images/Bif_kub0.pdf Graphic file (type pdf)
 <use images/Bif_kub0.pdf>
-Package luatex.def Info: images/Bif_kub0.pdf  used on input line 95.
+Package luatex.def Info: images/Bif_kub0.pdf  used on input line 98.
 (luatex.def)             Requested size: 225.85875pt x 169.39297pt.
 
-Overfull \hbox (86.08708pt too wide) in paragraph at lines 87--97
+Overfull \hbox (86.08708pt too wide) in paragraph at lines 90--100
 [][] [] 
  []
 
@@ -1477,37 +1478,37 @@ Missing character: There is no ̇ (U+0307) in font cmmi10!
 Missing character: There is no ̇ (U+0307) in font cmmi10!
 Missing character: There is no ̇ (U+0307) in font cmmi10!
 Missing character: There is no ̇ (U+0307) in font cmmi10!
-<images/Lorentz_r_20_projection.pdf, id=151, 462.528pt x 346.896pt>
+<images/Lorentz_r_20_projection.pdf, id=156, 462.528pt x 346.896pt>
 File: images/Lorentz_r_20_projection.pdf Graphic file (type pdf)
 <use images/Lorentz_r_20_projection.pdf>
-Package luatex.def Info: images/Lorentz_r_20_projection.pdf  used on input line 135.
+Package luatex.def Info: images/Lorentz_r_20_projection.pdf  used on input line 142.
 (luatex.def)             Requested size: 418.25555pt x 313.70677pt.
-<images/Lorentz_r_28_projection.pdf, id=152, 462.528pt x 346.896pt>
+<images/Lorentz_r_28_projection.pdf, id=157, 462.528pt x 346.896pt>
 File: images/Lorentz_r_28_projection.pdf Graphic file (type pdf)
 <use images/Lorentz_r_28_projection.pdf>
-Package luatex.def Info: images/Lorentz_r_28_projection.pdf  used on input line 139.
+Package luatex.def Info: images/Lorentz_r_28_projection.pdf  used on input line 146.
 (luatex.def)             Requested size: 418.25555pt x 313.70677pt.
 [3] [4<./images/Lorentz_r_20_projection.pdf>] [5<./images/Lorentz_r_28_projection.pdf>]
-<images/Lorentz_r_20_slice.pdf, id=229, 462.528pt x 346.896pt>
+<images/Lorentz_r_20_slice.pdf, id=232, 462.528pt x 346.896pt>
 File: images/Lorentz_r_20_slice.pdf Graphic file (type pdf)
 <use images/Lorentz_r_20_slice.pdf>
-Package luatex.def Info: images/Lorentz_r_20_slice.pdf  used on input line 150.
+Package luatex.def Info: images/Lorentz_r_20_slice.pdf  used on input line 157.
 (luatex.def)             Requested size: 418.25555pt x 313.70677pt.
-<images/Lorentz_r_28_slice.pdf, id=230, 462.528pt x 346.896pt>
+<images/Lorentz_r_28_slice.pdf, id=233, 462.528pt x 346.896pt>
 File: images/Lorentz_r_28_slice.pdf Graphic file (type pdf)
 <use images/Lorentz_r_28_slice.pdf>
-Package luatex.def Info: images/Lorentz_r_28_slice.pdf  used on input line 154.
+Package luatex.def Info: images/Lorentz_r_28_slice.pdf  used on input line 161.
 (luatex.def)             Requested size: 418.25555pt x 313.70677pt.
  [6<./images/Lorentz_r_20_slice.pdf>] [7<./images/Lorentz_r_28_slice.pdf>]
-<images/Lorentz_r_20_3d.pdf, id=311, 462.528pt x 346.896pt>
+<images/Lorentz_r_20_3d.pdf, id=314, 462.528pt x 346.896pt>
 File: images/Lorentz_r_20_3d.pdf Graphic file (type pdf)
 <use images/Lorentz_r_20_3d.pdf>
-Package luatex.def Info: images/Lorentz_r_20_3d.pdf  used on input line 162.
+Package luatex.def Info: images/Lorentz_r_20_3d.pdf  used on input line 169.
 (luatex.def)             Requested size: 418.25555pt x 313.70677pt.
-<images/Lorentz_r_28_3d.pdf, id=312, 462.528pt x 346.896pt>
+<images/Lorentz_r_28_3d.pdf, id=315, 462.528pt x 346.896pt>
 File: images/Lorentz_r_28_3d.pdf Graphic file (type pdf)
 <use images/Lorentz_r_28_3d.pdf>
-Package luatex.def Info: images/Lorentz_r_28_3d.pdf  used on input line 166.
+Package luatex.def Info: images/Lorentz_r_28_3d.pdf  used on input line 173.
 (luatex.def)             Requested size: 418.25555pt x 313.70677pt.
 ) [8<./images/Lorentz_r_20_3d.pdf>] [9<./images/Lorentz_r_28_3d.pdf>]
 
@@ -1515,7 +1516,7 @@ LaTeX Warning: Empty bibliography on input line 11.
 
 (./build/main.aux)
 Package rerunfilecheck Info: File `main.aux' has not changed.
-(rerunfilecheck)             Checksum: D185D886CDC8535F90B6B1FBC0BD5B77;3561.
+(rerunfilecheck)             Checksum: 171B4E363BED3A988EFACB9E4C3A4BE3;3834.
 
 
 LaTeX Warning: There were multiply-defined labels.
@@ -1526,19 +1527,19 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 )
 
 Here is how much of LuaTeX's memory you used:
- 39754 strings out of 478309
+ 39755 strings out of 478278
  100000,2373549 words of node,token memory allocated
  673 words of node memory still in use:
    8 hlist, 2 vlist, 2 rule, 1 local_par, 4 glue, 5 kern, 1 penalty, 3 glyph, 15 attribute, 73 glue_spec, 9 attribute_list, 1 write nodes
-   avail lists: 1:4,2:1880,3:280,4:152,5:345,6:60,7:4315,8:15,9:814,10:12,11:297,12:1
- 58679 multiletter control sequences out of 65536+600000
+   avail lists: 1:2,2:1928,3:309,4:158,5:435,6:68,7:5747,8:15,9:846,10:12,11:450,12:1
+ 58702 multiletter control sequences out of 65536+600000
  110 fonts using 44856719 bytes
- 113i,10n,117p,10917b,2933s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 113i,11n,117p,10617b,2933s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </home/johannes/.local/texlive/2023/texmf-dist/fonts/opentype/public/lm/lmroman10-bold.otf></home/johannes/.local/texlive/2023/texmf-dist/fonts/opentype/public/lm-math/latinmodern-math.otf></home/johannes/.local/texlive/2023/texmf-dist/fonts/opentype/public/lm/lmroman9-bold.otf></home/johannes/.local/texlive/2023/texmf-dist/fonts/opentype/public/lm-math/latinmodern-math.otf></home/johannes/.local/texlive/2023/texmf-dist/fonts/opentype/public/lm-math/latinmodern-math.otf></home/johannes/.local/texlive/2023/texmf-dist/fonts/opentype/public/lm/lmroman10-regular.otf></home/johannes/.local/texlive/2023/texmf-dist/fonts/opentype/public/lm/lmroman12-regular.otf></home/johannes/.local/texlive/2023/texmf-dist/fonts/opentype/public/lm/lmsans10-bold.otf></home/johannes/.local/texlive/2023/texmf-dist/fonts/opentype/public/lm/lmroman12-bold.otf>
-Output written on main.pdf (9 pages, 338493 bytes).
+Output written on main.pdf (9 pages, 339298 bytes).
 
-PDF statistics: 456 PDF objects out of 1000 (max. 8388607)
- 182 compressed objects within 2 object streams
+PDF statistics: 459 PDF objects out of 1000 (max. 8388607)
+ 185 compressed objects within 2 object streams
  26 named destinations out of 1000 (max. 131072)
  17 words of extra memory for PDF output out of 10000 (max. 100000000)
 

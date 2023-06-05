@@ -10,27 +10,23 @@ class Bifurkationsdiagramm{
     Bifurkationsdiagramm(double);
     double tolerance = 0.01; // tolerance of beeing "equal"
     double x_0;
-    double r_max_log = 4;
-    double r_max_kub = 3;
+    double r_max_log = 4; //max r for log 
+    double r_max_kub = 3; //max r for kub 
     double Delta_r = 0.001;
     unsigned int count = 0;
     double N;
-    vector<double> r_inf;
+    vector<double> r_inf; //vecotor for chaotic r-values
 
 
 
-
-    
-    int count_fix(double r);
     void save_fixpoints_log(double r_max);
     void save_fixpoints_kub(double r_max);
 
     private: 
         double x;
-
         vector<double> fix_point;
-        void logistisch_warm(double r, double x_0);
 
+        void logistisch_warm(double r, double x_0);
         void kubisch_warm(double r, double x_0);
         
         
@@ -58,24 +54,12 @@ void Bifurkationsdiagramm::kubisch_warm(double r, double x_0){
     }
 }
 
-int Bifurkationsdiagramm::count_fix(double r){
-    fix_point = {};
-    
-    do{
-    fix_point.push_back(x);
-    x = r*x*(1-x);
-    count++;
-    }while(!(x-tolerance < fix_point[0] && fix_point[0] < x+tolerance));
-
-    return count;
-}
-
 void Bifurkationsdiagramm::save_fixpoints_log(double r_max){
     vector<double> x_0 = {0.1,0.3,0.5,0.7,0.9};
     ofstream r_inf_data("./build/r_inf_log.csv");
     ofstream r_double_data("./build/r_double_log.csv");
 
-    for(int i=0; i<size(x_0);i++){
+    for(int i=0; i< 5;i++){
         ofstream r_data_csv("./build/r_data_log"+to_string(i)+".csv");
 
         count = 0;
@@ -100,8 +84,8 @@ void Bifurkationsdiagramm::save_fixpoints_log(double r_max){
                 }
                 
             }while(!(x-tolerance < fix_point[0] && fix_point[0] < x+tolerance));
-            if(count == 2*count_pre){
-                cout << x_0[i] << ':' << r << ',' << count << endl;
+            if(count > count_pre){
+                cout << "x_0:"<<x_0[i] << " mit r: " << r << " Fixpunkte " << count << endl;
                 
             }
         }
@@ -120,7 +104,7 @@ void Bifurkationsdiagramm::save_fixpoints_kub(double r_max){
     ofstream r_inf_data("./build/r_inf_kub.csv");
     ofstream r_double_data("./build/r_double_kub.csv");
 
-    for(int i=0; i<size(x_0);i++){
+    for(int i=0; i<5;i++){
         ofstream r_data_csv("./build/r_data_kub"+to_string(i)+".csv");
 
         count = 0;
