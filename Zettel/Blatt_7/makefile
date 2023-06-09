@@ -2,7 +2,6 @@
  
 Ex	= Ex2
 
-all: bin/*.csv 
 
 plots: bin/*.csv | build
 	python scripts/plot.py
