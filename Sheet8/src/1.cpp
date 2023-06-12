@@ -37,17 +37,6 @@ void iteration_pseudo_rng_with_save(int iterations, params parameter, string pat
     myfile.close();
 }
 
-VectorXd iteration_pseudo_rng(int iterations, params parameter){
-    long long int r_n_1;
-    VectorXd y(iterations);
-    for (int i = 0; i < iterations; i++){
-        r_n_1 = pseudo_rng(parameter);
-        parameter.seed = r_n_1;
-        y[i] = double(r_n_1)/parameter.m;
-    }
-    return y;
-}
-
 
 int main() {
     unsigned int N = 10e5;
