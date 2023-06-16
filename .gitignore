@@ -1,6 +1,7 @@
 .vscode/
 #ignore the folder called build anywhere, but not files called build
 build/
+bin/
 
 
 ## Core latex/pdflatex auxiliary files:

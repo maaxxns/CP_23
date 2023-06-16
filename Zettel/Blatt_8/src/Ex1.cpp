@@ -34,7 +34,7 @@ int main(){
     Eigen::VectorXd r_n;
 
     
-    N = 6000;
+    N = 6074;
 
     ofstream a_data("./build/a_data.csv");
     //a)
@@ -46,7 +46,7 @@ int main(){
     a_data << r_n << endl;
     a_data.close();
 
-    N = 250;
+    N = 255;
     ofstream b_data("./build/b_data.csv");
     //b)
     r_0 = 1234;
@@ -79,7 +79,6 @@ int main(){
     r_n = Rand_Gen(r_0,a,c,m,N);
     d_data << r_n << endl;
     d_data.close();
-
 
 
     return 0;

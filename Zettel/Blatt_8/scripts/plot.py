@@ -19,3 +19,14 @@ for i in Nr:
     plt.savefig("./build/" + i + ".pdf")
     plt.clf()
 
+
+
+for i in Nr:
+    globals()[i+"_x"] = globals()[i][0:-2:2]
+    globals()[i+"_y"] = globals()[i][1:-1:2]
+
+
+    plt.scatter(globals()[i+"_x"],globals()[i+"_y"], alpha=0.4, s = 1)
+    plt.title("Scatterplot of "+i+")")
+    plt.savefig("./build/"+i+"2d.pdf")
+    plt.clf()
