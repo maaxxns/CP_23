@@ -5,7 +5,11 @@
 #include <Eigen/Dense>
 using namespace std;
 
+class particle_swarm{
+    public:
+        particle_swarm();
 
+};
 
 int main(){
 
