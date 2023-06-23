@@ -14,10 +14,12 @@ double func_deriv(double x){
     return 2*x;
 };
 
+//Halbierung:
 void Intervallhalbierung(double (*func)(double), double x_e, double x, double y, double z){
     ofstream points("./build/halbierung.csv");
     double u;
     int steps = 0;
+    points << steps << ' ' << x << ' ' << y << ' ' << z << endl;
     while((z-x)>x_e){
         if(y-x<z-y){
             u = (y+z)/2;
@@ -53,6 +55,7 @@ void Intervallhalbierung(double (*func)(double), double x_e, double x, double y,
 
 };
 
+// numeric calc of derivatives(4 point method)
 double firstDerivative(double (*function)(double), double x, double h) {
     double f_x_plus_2h = function(x + 2. * h);
     double f_x_plus_h = function(x + h);
@@ -70,6 +73,8 @@ double secondDerivative(double (*function)(double), double x, double h) {
 
     return ((f_x_plus_h - 2. * f_x + f_x_minus_h) / (h * h));
 }
+
+//Newton:
 
 void Newton(double (*func)(double), double x_e, double x){
     ofstream points("./build/newton.csv");
