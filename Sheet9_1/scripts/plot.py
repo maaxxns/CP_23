@@ -1,0 +1,40 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+newton = np.genfromtxt("bin/newton.csv", delimiter=", ")
+intervall= np.genfromtxt("bin/intervall.csv", delimiter=", ")
+
+x = np.linspace(-0.7, 2.2, 1000)
+
+plt.figure()
+plt.plot(newton[:,1], newton[:,0],"x" ,label='newton')
+plt.title("The x_i of newton against the step number")
+plt.xlabel("i")
+plt.ylabel(r"$x_i$")
+plt.legend()
+plt.savefig("build/newton.pdf")
+plt.close()
+
+plt.figure()
+plt.plot(x, x**2-2, label="f(x)")
+plt.plot(intervall[:,0], intervall[:,0]**2 - 2, "x", label=r'$x_i$')
+plt.plot(intervall[:,1], intervall[:,1]**2 - 2, "x",label=r"$y_i$")
+plt.plot(intervall[:,2], intervall[:,2]**2 - 2, "x",label=r"$z_i$")
+plt.legend()
+plt.xlabel("x")
+plt.ylabel("f(x)")
+plt.savefig("build/intervall.pdf")
+plt.close()
+
+plt.figure()
+plt.plot(x, x**2-2, label="f(x)")
+plt.plot(intervall[:,0], intervall[:,0]**2 - 2, "x", label=r'$x_i$')
+plt.plot(intervall[:,1], intervall[:,1]**2 - 2, "x",label=r"$y_i$")
+plt.plot(intervall[:,2], intervall[:,2]**2 - 2, "x",label=r"$z_i$")
+plt.legend()
+plt.xlabel("x")
+plt.ylabel("f(x)")
+plt.xlim(-0.2,0.2)
+plt.ylim(-2.1, -1.9)
+plt.savefig("build/intervall_zoom.pdf")
+plt.close()
