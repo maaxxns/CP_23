@@ -88,7 +88,7 @@ void Newton(double (*func)(double), double x_e, double x){
         ddf = secondDerivative(func, x,  0.1);
         x = x_old - (df/ddf);
         steps++;
-    }while(abs(x_old-x) > x_e);
+    }while(abs(x_old-x) > x_e); //Konvergenzbedingung 
     points.close();
 };
 
