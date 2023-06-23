@@ -7,7 +7,7 @@ all: bin/*.csv
 plots: bin/*.csv | build
 	python scripts/plot.py
 
-bin/*.csv: bin/$(Ex) | bin 
+bin/*.csv: bin/$(Ex) | build 
 	./bin/$(Ex) 
 
 bin/$(Ex): src/$(Ex).cpp | bin 
