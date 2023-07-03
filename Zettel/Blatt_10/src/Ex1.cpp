@@ -11,13 +11,6 @@ double Hamilton(int sigma, double H){
     return -sigma * H;
 }
 
-class MC{
-    private:
-    MC(double (*Hamilton)(int, double));
-    void equilibrate();
-    public:
-    
-};
 
 
 int main(){

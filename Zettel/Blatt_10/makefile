@@ -1,6 +1,6 @@
 .PHONY: all
  
-Ex	= Ex1
+Ex	= Ex2
 
 all: plots
 
