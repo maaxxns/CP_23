@@ -5,7 +5,7 @@ Ex	= Ex2
 all: plots
 
 plots: bin/*.csv | build
-	python scripts/plot.py
+	python scripts/plot_2.py
 
 bin/*.csv: bin/$(Ex) | build 
 	./bin/$(Ex) 
