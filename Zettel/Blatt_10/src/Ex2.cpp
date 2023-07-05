@@ -19,7 +19,7 @@ class Ising_Metropolis{
     void initialise_rnd();
     void initialise_orderly();
     void equlibrate();
-    double Energy(int, int);
+    double Energy(int, int, int);
     
 
 };
@@ -53,32 +53,55 @@ template <unsigned int size> void Ising_Metropolis<size>::equlibrate(){
     int spin = Spins[i][j];
     int old_spin = spin;
     spin *= -1;
-    double Delta_E = Hamilton(spin, H) - Hamilton(old_spin, H);
+    double Delta_E = Energy(i,j, spin) - Energy(i,j, old_spin);
+    if(Delta_E < 0 || dist(rnd) < exp(-beta*Delta_E)){
+        magnetisation_sum += spin;
+    }
+    else{
+        spin = old_spin;
+        magnetisation_sum += spin;
+    }
 
 
 };
-template <unsigned int size> double Ising_Metropolis<size>::Energy(int i, int j){
+template <unsigned int size> double Ising_Metropolis<size>::Energy(int i, int j, int spin_loc){
     int energy_sum;
-    int spin_loc = Spins[i][j];
     int spin_top; 
     int spin_down; 
     int spin_left; 
     int spin_right;
 
-    if(i==0 && j==0){
+    if(i==0){
         spin_top = Spins[size-1][j];
-        spin_left = Spins[i][size-1];
-    if(i==0 && j==size-1){
-        spin_top = Spins[size-1][j];
-        spin_right = Spins[i][0];
+        if(j==0){
+            spin_left = Spins[i][size-1];
+        }else{
+            spin_left = Spins[i][j-1];
+        }
+        if(j==size-1){
+            spin_right = Spins[i][0];
+        }else{
+            spin_right = Spins[i][j+1];
+        }
+    }else{
+        spin_top = Spins[i-1][j];
+        if(j==0){
+            spin_left = Spins[i][size-1];
+        }else{
+            spin_left = Spins[i][j-1];
+        }
+        if(j==size-1){
+            spin_right = Spins[i][0];
+        }else{
+            spin_right = Spins[i][j+1];
+        }
     }
-    if(i==size-1 && j==0){
-        spin_down = Spins[size-1][j];
-        spin_left = Spins[i][0];
+    if(i==size-1){
+        spin_down = Spins[0][j];
+    }else{
+        spin_down = Spins[i+1][j];
     }
-
-        energy_sum = }
-
+    energy_sum = - spin_loc * spin_down - spin_loc * spin_left - spin_loc * spin_top - spin_loc * spin_right;
     return energy_sum;
 }
 
@@ -88,6 +111,13 @@ int main(){
 
 Ising_Metropolis<10> Test1;
 Test1.initialise_rnd();
+for(int i = 0; i<10; i++){
+    for(int j = 0; j<10; j++){
+            cout << i << ','<< j << ',' << Test1.Energy(i,j) << endl;
+    }
+
+}
+
 
 
 return 0;
