@@ -57,6 +57,10 @@
         "thread": "cpp",
         "typeinfo": "cpp",
         "numbers": "cpp",
-        "core": "cpp"
+        "core": "cpp",
+        "compare": "cpp",
+        "concepts": "cpp",
+        "semaphore": "cpp",
+        "stop_token": "cpp"
     }
 }
