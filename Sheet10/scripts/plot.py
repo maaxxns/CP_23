@@ -1,28 +1,111 @@
 import numpy as np 
 import matplotlib.pyplot as plt 
+from matplotlib.animation import FuncAnimation
 
-time_step= 0.2
-path = '/mnt/c/Users/Max/Desktop/Computational_Physics/Sheet0/bin/'
-recursive_array = np.genfromtxt(path + 'eulera.csv', delimiter=', ')
-sym_recursion_array = np.genfromtxt(path + 'symeulera.csv', delimiter=', ')
-#recursive_array = np.array([0.8,0.64,0.512,0.4096,0.32768,0.262144,0.209715,0.167772,0.134218,0.107374,0.0858993,0.0687195,0.0549756,0.0439805,0.0351844,0.0281475,0.022518,0.0180144,0.0144115,0.0115292,0.00922337,0.0073787,0.00590296,0.00472237,0.00377789,0.00302231,0.00241785,0.00193428,0.00154743,0.00123794,0.000990352,0.000792282,0.000633825,0.00050706,0.000405648,0.000324519,0.000259615,0.000207692,0.000166153,0.000132923,0.000106338,8.50706e-05,6.80565e-05,5.44452e-05,4.35561e-05,3.48449e-05,2.78759e-05,2.23007e-05,1.78406e-05,1.42725e-05,1.1418e-05,9.13439e-06,7.30751e-06,5.84601e-06,4.67681e-06,3.74144e-06,2.99316e-06,2.39452e-06,1.91562e-06,1.5325e-06,1.226e-06,9.80797e-07,7.84638e-07,6.2771e-07,5.02168e-07,4.01735e-07,3.21388e-07,2.5711e-07,2.05688e-07,1.6455e-07,1.3164e-07,1.05312e-07,8.42498e-08,6.73999e-08,5.39199e-08,4.31359e-08,3.45087e-08,2.7607e-08,2.20856e-08,1.76685e-08,1.41348e-08,1.13078e-08,9.04626e-09,7.23701e-09,5.7896e-09,4.63168e-09,3.70535e-09,2.96428e-09,2.37142e-09,1.89714e-09,1.51771e-09,1.21417e-09,9.71334e-10,7.77068e-10,6.21654e-10,4.97323e-10,3.97859e-10,3.18287e-10,2.54629e-10,2.03704e-10])
-#sym_recursion_array = np.array([0.818731,0.672508,0.549728,0.452617,0.368681,0.305144,0.246623,0.206495,0.164025,0.140885,0.107671,0.0978161,0.068545,0.0703981,0.0403858,0.0542438,0.0186882,0.0467685,-1.91616e-05,0.0467762,-0.0187296,0.054268,-0.0404369,0.0704428,-0.068614,0.0978884,-0.107769,0.140996,-0.164168,0.206663,-0.246833,0.305396,-0.368992,0.452993,-0.550189,0.673069,-0.819416,1.00084,-1.21975,1.48874,-1.81524,2.21483,-2.70118,3.2953,-4.0193,4.90302,-5.98051,7.29523,-8.8986,10.8547,-13.2405,16.1509,-19.7008,24.0312,-29.3133,35.7565,-43.6159,53.2028,-64.897,79.1616,-96.5617,117.786,-143.676,175.257,-213.779,260.768,-318.086,388.003,-473.287,577.318,-704.214,859.004,-1047.82,1278.13,-1559.07,1901.76,-2319.77,2829.67,-3451.64,4210.32,-5135.76,6264.63,-7641.62,9321.27,-11370.1,13869.3,-16917.9,20636.5,-25172.4,30705.4,-37454.6,45687.3,-55729.5,67979.1,-82921.2,101148,-123380,150500,-183580,223932])
-x = np.linspace(0, len(recursive_array)*time_step, len(recursive_array))
-x_2 = np.linspace(0, 10, len(recursive_array))
-plt.figure()
-plt.plot(x[:45], recursive_array[:45]+2, 'kx', label='euler + 2') # I add by two too shift it up a bit
-plt.plot(x[:45], sym_recursion_array[:45]+1, 'b.', label='symmertric euler + 1')
-plt.plot(x_2, np.exp(-x_2), 'r.', label='analytic e')
-plt.legend()
-plt.savefig(path + 'plota.pdf')
+data = np.genfromtxt("bin/state.csv", comments="#", delimiter=", ") # data[0,:] gives array of time 0 so first index is time second is space kind of
 
-recursive_array_b = np.genfromtxt(path + 'eulerb.csv', delimiter=', ')
-sym_recursion_array_b = np.genfromtxt(path + 'symeulerb.csv', delimiter=', ')
-x_a = np.linspace(0, len(recursive_array_b)*time_step, len(recursive_array_b))
-x_2_b = np.linspace(0, 10, len(recursive_array_b))
+data_1 = np.genfromtxt("bin/state_at_T_1.csv", delimiter=", ")
+data_3 = np.genfromtxt("bin/state_at_T_3.csv", delimiter=", ")
+
+data_energy_1_5 = np.genfromtxt("bin/energy_per_spinT_1_5.csv", delimiter=", ")
+data_energy_3 = np.genfromtxt("bin/energy_per_spinT_3.csv", delimiter=", ")
+
+data_abs_mag_1_5 = np.genfromtxt("bin/abs_magnetT_1_5.csv", delimiter=", ")
+data_abs_mag_3 = np.genfromtxt("bin/abs_magnetT_3.csv", delimiter=", ")
+
+data_mag_1_5 = np.genfromtxt("bin/magnetT_1_5.csv", delimiter=", ")
+data_mag_3 = np.genfromtxt("bin/magnetT_3.csv", delimiter=", ")
+
+
+extent = [0, 100, 0, 100]
 plt.figure()
-plt.plot(x_a[:45], recursive_array_b[:45]+2, 'kx', label='euler + 2') # I add by two too shift it up a bit
-plt.plot(x_a[:20], sym_recursion_array_b[:20]+1, 'b.', label='symmertric euler + 1')
-plt.plot(x_2_b, np.exp(-x_2_b), 'r.', label='analytic e')
-plt.legend()
-plt.savefig(path + 'plotb.pdf')
+plt.imshow(data_1.reshape(100, 100), aspect="auto",vmin=-1, vmax=1, cmap="magma", extent=extent)
+plt.title("Snapshot at kT = 1")
+plt.savefig("build/T_1.pdf")
+plt.close()
+
+plt.figure()
+extent = [0, 100, 0, 100]
+plt.imshow(data_3.reshape(100, 100), aspect="auto",vmin=-1, vmax=1, cmap="magma", extent=extent)
+plt.title("Snapshot at kT = 3")
+plt.savefig("build/T_3.pdf")
+plt.close()
+###################################################################################################
+x = np.linspace(0, len(data_energy_1_5), len(data_energy_1_5))
+
+plt.figure()
+plt.plot(x, data_energy_1_5, "ox", label="Energy per State")
+plt.title("Energy per State per Time step for 1.5=Tk")
+plt.xlabel("time/steps")
+plt.ylabel("Energy")
+plt.savefig("build/energy_per_state_T_1_5.pdf")
+plt.close()
+
+plt.figure()
+plt.plot(x, data_energy_3, "ox", label="Energy per State")
+plt.title("Energy per State per Time step for 3=Tk")
+plt.xlabel("time/steps")
+plt.ylabel("Energy")
+plt.savefig("build/energy_per_state_T_3.pdf")
+plt.close()
+
+###################################################################################################
+plt.figure()
+plt.plot(x, data_mag_1_5, "ox", label="magnetization")
+plt.title("Magnetization for 1.5=Tk")
+plt.xlabel("time/steps")
+plt.ylabel(r"$\sum m$")
+plt.savefig("build/magnet_T_1_5.pdf")
+plt.close()
+
+plt.figure()
+plt.plot(x, data_mag_3, "ox", label="magnetization")
+plt.title("Magnetization for 3=Tk")
+plt.xlabel("time/steps")
+plt.ylabel(r"$\sum m$")
+plt.savefig("build/magnet_T_3.pdf")
+plt.close()
+
+###################################################################################################
+
+plt.figure()
+plt.plot(x, data_abs_mag_1_5, "ox", label="magnetization")
+plt.title("Magnetization for 1.5=Tk")
+plt.xlabel("time/steps")
+plt.ylabel(r"$\sum |m|$")
+plt.savefig("build/abs_magnet_T_1_5.pdf")
+plt.close()
+
+plt.figure()
+plt.plot(x, data_abs_mag_3, "ox", label="magnetization")
+plt.title("Magnetization for 3=Tk")
+plt.xlabel("time/steps")
+plt.ylabel(r"$\sum |m|$")
+plt.savefig("build/abs_magnet_T_3.pdf")
+plt.close()
+
+
+
+###################################################################################################
+
+iterator = len(data[:,0])//100
+
+def animate(n):
+    anidata = data[iterator*n,:].reshape(100,100)
+    if(n == 0):
+        print(0, "%\r")
+    else:
+        print(n, " %\r")
+    extent = [0, 100, 0, 100]
+    im = ax.imshow(anidata ,aspect="auto",vmin=-1, vmax=1, cmap="magma", extent=extent)
+    return [im]
+
+
+
+fig = plt.figure()
+ax = fig.add_subplot(111)
+ax.set_title('Ising')
+ax.set_xlabel("x")
+ax.set_ylabel("y")
+anim = FuncAnimation(fig, animate, frames=100, interval=20, blit=True) #intervall is time between frames, blit is only frames that changed are redrawn
+anim.save('build/ising.gif',writer='pillow', fps=15) #, extra_args=['-vcodec', 'libx264']

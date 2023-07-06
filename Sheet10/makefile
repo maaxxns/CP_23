@@ -1,11 +1,13 @@
-.PHONY: all
+.PHONY: all 1 2
 
-all: build/Diffusion_c_weird.mp4
+all: 1 2
 
-build/Diffusion_c_weird.mp4: bin/*.csv | build
+2: build/ising.gif
+
+build/ising.gif: bin/state.csv scripts/plot.py | build 
 	python scripts/plot.py
 
-bin/*.csv: bin/2 | bin 
+bin/state.csv: bin/2 | bin 
 	./bin/2 
 
 bin/2: src/2.cpp | bin 
