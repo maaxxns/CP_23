@@ -22,4 +22,10 @@ for k in np.array([1,3]):
 
 
 
+k_BT_array = np.array([1.5, 2.0, 2.25, 2.5, 3.0])
+start_conditions_array = np.array("orderly" , "rnd")
 
+for start_condiotion in start_conditions_array:
+    for k_BT in k_BT_array:
+        sweep, av_energy = np.genfromtxt("./build/av_energy_"+start_condiotion+"_k_BT_"+k_BT+".csv")
+        plt.plot(sweep, av_energy, label = )
