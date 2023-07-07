@@ -14,8 +14,14 @@ class Ising_Metropolis{
         uniform_real_distribution<double> p;
         uniform_int_distribution<> dist_i, dist_j;
 
+        int Spins[size][size];
+        double k_BT = 1;
+        double beta = 1/k_BT;
+        
         void saveToCSV(const std::string& filename);
         double Energy(int, int, int);
+        void equilibrate(int);
+
     public:
         Ising_Metropolis() 
         : 
@@ -24,15 +30,15 @@ class Ising_Metropolis{
             dist_i(0,size-1),
             dist_j(0,size-1)
         {};
-        double k_BT = 1;
-        double beta = 1/k_BT;
-        int Spins[size][size];
+
+
         void set_k_BT(double);
         void initialise_rnd();
         void initialise_orderly();
-        void equilibrate(int);
+
+        void equilibrate_save_average_energy(int,const std::string& filename);
         void measure(int, int);
-        
+        double energy_total();
     
 
 };
@@ -51,6 +57,16 @@ template <int size> void Ising_Metropolis<size>::set_k_BT(double new_k_BT){
 
 }
 
+template <int size> double Ising_Metropolis<size>::energy_total(){
+    double energy_sum = 0;
+    for(int i = 0; i<size;i++){
+        for(int j=0; j<size; j++){
+            energy_sum = energy_sum + Energy(i,j,Spins[i][j]);
+        }
+    }
+    return energy_sum;
+};
+
 template <int size> void Ising_Metropolis<size>::initialise_orderly(){
     for(int i=0; i < size; i++){
         for(int j=0; j < size; j++){
@@ -61,9 +77,9 @@ template <int size> void Ising_Metropolis<size>::initialise_orderly(){
 };
 
 template <int size> void Ising_Metropolis<size>::equilibrate(int n_sweeps){
-    
+    int N = size * size;
     for(int sweeps = 0; sweeps < n_sweeps; sweeps++){
-        for(int iterator = 0; iterator < size*size; iterator++){
+        for(int iterator = 0; iterator < N; iterator++){
             int i = dist_i(generator);
             int j = dist_j(generator);
             int spin = Spins[i][j];
@@ -75,10 +91,39 @@ template <int size> void Ising_Metropolis<size>::equilibrate(int n_sweeps){
             }
             else{
                 Spins[i][j] = old_spin;
-    
             }
         }
     }
+};
+
+template <int size> void Ising_Metropolis<size>::equilibrate_save_average_energy(int n_sweeps, const std::string& filename){
+    int N = size * size;
+    ofstream av_energy("build/"+filename+".csv");
+    for(int sweeps = 0; sweeps < n_sweeps; sweeps++){
+        double Energy_total = energy_total();
+        double energy_sum=0;
+        for(int iterator = 0; iterator < N; iterator++){
+            int i = dist_i(generator);
+            int j = dist_j(generator);
+            int spin = Spins[i][j];
+            int old_spin = spin;
+            spin *= -1;
+            double Delta_E = Energy(i,j, spin) - Energy(i,j, old_spin);
+            if(Delta_E < 0 || p(generator) < exp(-beta*Delta_E)){       
+                Spins[i][j] = spin;
+                Energy_total = Energy_total + Delta_E;
+                energy_sum = energy_sum + Energy_total;
+            }
+            else{
+                Spins[i][j] = old_spin;
+            }
+
+
+        }
+        double average_energy_per_spin = energy_sum/(N*N);
+        av_energy << sweeps << ',' << average_energy_per_spin << endl;
+    }
+    av_energy.close();
 };
 
 template <int size> void Ising_Metropolis<size>::measure(int n_equilibrate, int n_sweeps){
@@ -175,14 +220,37 @@ template<int size> void Ising_Metropolis<size>::saveToCSV(const std::string& fil
 
 int main(){
 
+// 1. Aufgabe
 int const size = 100;
 Ising_Metropolis<size> Test1;
 Test1.initialise_rnd();
 Test1.measure(100,1e4);
-Test1.set_k_BT(3.0);
+Test1.set_k_BT(3);
 Test1.measure(100,1e4);
 
 
+// 2. Aufgabe
+Test1.initialise_rnd();
+float k_BT_array[] = {1.5, 2.0, 2.25 , 2.5, 3};
+for(int k_BT_iterator = 0; k_BT_iterator < 5; k_BT_iterator ++){
+    Test1.set_k_BT(k_BT_array[k_BT_iterator]);
+
+    string k_BT_string = to_string(k_BT_array[k_BT_iterator]);
+    k_BT_string.erase(k_BT_string.find_last_not_of('0') + 1, std::string::npos);
+    k_BT_string.erase(k_BT_string.find_last_not_of('.') + 1, std::string::npos );
+
+    Test1.equilibrate_save_average_energy(1000, "av_energy_rnd_k_BT_"+k_BT_string);
+}
+Test1.initialise_orderly();
+for(int k_BT_iterator = 0; k_BT_iterator < 5; k_BT_iterator ++){
+    Test1.set_k_BT(k_BT_array[k_BT_iterator]);
+
+    string k_BT_string = to_string(k_BT_array[k_BT_iterator]);
+    k_BT_string.erase(k_BT_string.find_last_not_of('0') + 1, std::string::npos);
+    k_BT_string.erase(k_BT_string.find_last_not_of('.') + 1, std::string::npos );
+
+    Test1.equilibrate_save_average_energy(1000, "av_energy_orderly_k_BT_"+k_BT_string);
+}
 
 
 return 0;
