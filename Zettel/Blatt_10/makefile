@@ -1,8 +1,8 @@
 .PHONY: all
  
-Ex	= 2
+Ex	= 1
 
-all: bin/*.csv
+all: plots
 
 plots: bin/*.csv | build
 	python scripts/plot$(Ex).py

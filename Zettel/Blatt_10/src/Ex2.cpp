@@ -239,7 +239,7 @@ for(int k_BT_iterator = 0; k_BT_iterator < 5; k_BT_iterator ++){
     k_BT_string.erase(k_BT_string.find_last_not_of('0') + 1, std::string::npos);
     k_BT_string.erase(k_BT_string.find_last_not_of('.') + 1, std::string::npos );
 
-    Test1.equilibrate_save_average_energy(1000, "av_energy_rnd_k_BT_"+k_BT_string);
+    Test1.equilibrate_save_average_energy(400, "av_energy_rnd_k_BT_"+k_BT_string);
 }
 Test1.initialise_orderly();
 for(int k_BT_iterator = 0; k_BT_iterator < 5; k_BT_iterator ++){
@@ -249,7 +249,7 @@ for(int k_BT_iterator = 0; k_BT_iterator < 5; k_BT_iterator ++){
     k_BT_string.erase(k_BT_string.find_last_not_of('0') + 1, std::string::npos);
     k_BT_string.erase(k_BT_string.find_last_not_of('.') + 1, std::string::npos );
 
-    Test1.equilibrate_save_average_energy(1000, "av_energy_orderly_k_BT_"+k_BT_string);
+    Test1.equilibrate_save_average_energy(400, "av_energy_ord_k_BT_"+k_BT_string);
 }
 
 

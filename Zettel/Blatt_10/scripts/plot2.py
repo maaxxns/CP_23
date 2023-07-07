@@ -22,10 +22,22 @@ for k in np.array([1,3]):
 
 
 
-k_BT_array = np.array([1.5, 2.0, 2.25, 2.5, 3.0])
-start_conditions_array = np.array("orderly" , "rnd")
-
-for start_condiotion in start_conditions_array:
-    for k_BT in k_BT_array:
-        sweep, av_energy = np.genfromtxt("./build/av_energy_"+start_condiotion+"_k_BT_"+k_BT+".csv")
-        plt.plot(sweep, av_energy, label = )
+k_BT_array = np.array(["1.5", "2.25", "3"])
+start_conditions_array = np.array(["ord" , "rnd"])
+form_array = np.array(['x', '.', 'o'])
+i = 0
+for k_BT in k_BT_array:
+    for start_condition in start_conditions_array:
+        sweep, av_energy = np.genfromtxt("./build/av_energy_"+start_condition+"_k_BT_"+k_BT+".csv", unpack=True, delimiter=',')
+        if sweep.size > 1000:
+            plt.plot(sweep[::20], av_energy[::20], form_array[i], label = "k_BT="+k_BT+"_"+start_condition, alpha = 0.6)
+        else:
+            plt.plot(sweep, av_energy, form_array[i], label = "k_BT="+k_BT+"_"+start_condition, alpha = 0.6)
+    i = i+1
+plt.xlabel("sweep")
+plt.ylabel("avg. Energy per Spin")
+plt.title("Euqilibrate comparison")
+plt.legend()
+plt.tight_layout()
+plt.savefig("./build/av_energy.pdf")
+plt.clf()
